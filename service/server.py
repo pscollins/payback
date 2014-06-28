@@ -4,22 +4,24 @@ from flask import Flask, request
 
 from manager import Manager
 from utils import easylogger
+from service import app
 
 
-app = Flask(__name__)
+# app = Flask(__name__)
 manager = Manager()
 LOG = easylogger.LOG
 # class InvalidFileError(Exception):
 #     status_code = 400
 
-@log_at(logging.DEBUG)
+@easylogger.log_at(logging.DEBUG)
 @app.route("/", methods=["GET", "POST"])
 def main():
     if request.method == "POST":
         files_dict = request.files
-
+        LOG.error("request: ", request.__dict__)
+        LOG.error("len(files_dict)", len(files_dict))
         for name in files_dict:
-            LOG.debug("file name: ", files.dict)
+            LOG.error("file name: ", files.dict)
 
         if manager.process(files_dict):
             return "SUCCESS"

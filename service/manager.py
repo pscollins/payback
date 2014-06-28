@@ -4,5 +4,5 @@ class Manager(object):
     def __init__(self):
         pass
 
-    def process(files_dict):
-        return False
+    def process(self, files_dict):
+        return True
