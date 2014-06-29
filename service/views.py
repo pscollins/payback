@@ -147,13 +147,12 @@ def profile():
     if request.method == "POST":
         #me = user_from_cookies(request.cookies)
         add_training_imgs(current_user, request)
-<<<<<<< HEAD
-        
 
-        # FLASH HERE OR WHATEVER
-=======
+
+
+        # FLASH HERE OR WHATEVER==x
         flash('images added.')
->>>>>>> 216d80fd548e7aefdbeb5b6432e5160bb285d9db
+
 
     return render_template("my_profile.html", username=current_user.name)
 
