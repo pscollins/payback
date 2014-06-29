@@ -115,16 +115,16 @@ def register_user():
     LOG.debug("auth_code: ", auth_code)
 
     person = venmo.person_from_auth_code(auth_code)
-
-    # COMMIT PERSON TO DB
-    person.save()
+    x = Person.objects(number=person.number).first()
+    if x:
+        login_user(x)
+    else:
+        # COMMIT PERSON TO DB
+        person.save()
+        login_user(person)
 
     resp = make_response(render_template("my_profile.html",
                                         success_message="Welcome!"))
-
-    # set cookie so we can later know who uploads the file
-    #resp.set_cookie("usernum", person.number)
-    login_user(person)
 
 
     # RETURN "SUCESSFULLY REGISTERED" TEMPLATE
