@@ -69,6 +69,8 @@ def render_login():
 @app.route("/text_recv", methods=["GET"])
 def receive_text():
     params = request.args
+    LOG.debug("got request: ", request)
+    LOG.debug("request.args: ", request.args)
     twilreq = TwilReq(params.get("From"), params.get("Body"))
 
     bills, person_billed = twilio.process_twilreq(twilreq)
