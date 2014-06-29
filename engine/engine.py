@@ -152,8 +152,7 @@ class TwilioClient(object):
         LOG.debug("twilreq: ", twilreq)
 
         # FIX ME LATER TO DO SMART THINGS
-        if (twilreq.body == "OK" or
-            twilreq.body == "Ok"):
+        if twilreq.body.lower() == "ok":
             to_bill_person = Person.objects(number=twilreq.from_)
             LOG.debug("to_bill_person: ",
                       to_bill_person)
