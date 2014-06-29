@@ -152,7 +152,8 @@ class TwilioClient(object):
         LOG.debug("twilreq: ", twilreq)
 
         # FIX ME LATER TO DO SMART THINGS
-        if twilreq.body == "OK":
+        if (twilreq.body == "OK" or
+            twilreq.body == "Ok"):
             to_bill_person = Person.objects(number=twilreq.from_)
             LOG.debug("to_bill_person: ",
                       to_bill_person)
@@ -175,7 +176,7 @@ class TwilioClient(object):
 
 class SkyClient(object):
     NAMESPACE = "PayBackTest"
-    MIN_CONF = 40
+    MIN_CONF = 5
 
     def __init__(self, client_id=SB_CLIENT_ID,
                  secret_key=SB_SECRET_KEY):
@@ -191,6 +192,7 @@ class SkyClient(object):
     # match on person.number b/c unique
     def train_for_user(self, person, *images):
         LOG.debug("Sending to faces_detect")
+        LOG.debug("Got images: ", images)
 
         resps = [self.client.faces_detect(file=im) for im in images]
 

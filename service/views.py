@@ -26,8 +26,7 @@ def load_user(phone_number):
     return Person.objects(number=phone_number).first()
 
 
-# @easylogger.log_at(logging.DEBUG)
-# @app.route("/proc_file", methods=["GET", "POST"])
+@app.route("/proc_file", methods=["GET", "POST"])
 def add_training_imgs(request_, user):
     files_dict = request_.files
     LOG.error("request: ", request.__dict__)
@@ -35,10 +34,14 @@ def add_training_imgs(request_, user):
     for name in files_dict:
         LOG.debug("file name: ", name)
 
-    sky.train_for_user(user, request.files)
+    sky.train_for_user(user, request.files.get("set"))
     # if manager.process(files_dict):
 
     return "SUCCESS"
+
+@app.route("/upload_test", methods=["GET"])
+def test_upload():
+    return render_template("temp.html")
 
 def apply_bill_for(request_, amount):
     files_dict = request_.files
@@ -55,6 +58,10 @@ def apply_bill_for(request_, amount):
                      for num in nums_to_bill]
 
     # me = user_from_cookies(request.cookies)
+    if len(users_to_bill) == 0:
+        flash('Cannot find any faces')
+        return 0
+
     amt_per_person = float(amount)/len(users_to_bill)
 
     LOG.debug("me: ", current_user)
@@ -62,12 +69,12 @@ def apply_bill_for(request_, amount):
 
     # ADD IN CHECK SO YOU DON'T BILL ME
     for user in users_to_bill:
-        bill = Bill(to=current_user.id, from_=user, amount=amt_per_person)
+        bill = Bill(from_=current_user.id, to=user, amount=float(amt_per_person))
         bill.save()
         twilio.send_auth_text(bill)
-
-    # RETURN SOME SUCCESS INDICATOR
-    return ""
+    
+    flash('%s got billed' % ' '.join(users_to_bill))
+    return len(users_to_bill)
 
 @app.route("/mobile", methods=["GET"])
 def render_simple_upload():
@@ -81,7 +88,9 @@ def apply_uploaded_file():
     amount = request.form.get("amount")
     LOG.debug("amount: ", amount)
 
-    return apply_bill_for(request, amount)
+    apply_bill_for(request, amount)
+
+    return redirect(url_for('profile'))
 
 @app.route("/", methods=["GET"])
 def render_login():
@@ -143,7 +152,8 @@ def logout():
 def profile():
     if request.method == "POST":
         #me = user_from_cookies(request.cookies)
-        add_training_imgs(current_user, request)
+        add_training_imgs(request, current_user)
+
         flash('images added.')
     
     if current_user.is_authenticated():
