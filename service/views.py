@@ -2,7 +2,7 @@ import logging
 # import requests
 
 from flask import Flask, request, render_template, make_response, redirect, url_for
-from flask.ext.login import login_user, logout_user, current_user
+from flask.ext.login import login_user, logout_user, current_user, login_required
 from manager import Manager
 from utils import easylogger
 from service import app, login_manager
@@ -121,7 +121,7 @@ def register_user():
 
     # set cookie so we can later know who uploads the file
     #resp.set_cookie("usernum", person.number)
-    login_user(person.number)
+    login_user(person)
 
 
     # RETURN "SUCESSFULLY REGISTERED" TEMPLATE
@@ -139,6 +139,7 @@ def logout():
 
 
 @app.route("/profile", methods=["GET", "POST"])
+@login_required
 def profile():
     if request.method == "POST":
         #me = user_from_cookies(request.cookies)
@@ -146,7 +147,7 @@ def profile():
 
         # FLASH HERE OR WHATEVER
 
-    return render_template("my_profile.html")
+    return render_template("my_profile.html", username=current_user.name)
 
 
 if __name__ == "__main__":
