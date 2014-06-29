@@ -1,6 +1,6 @@
 # Testing credentials! Don't worry.
 
-TW_CLIENT_ID = "ACe2cfa94dbe756f51d5db29dc32f2fe7c"
+TW_CLIENT_ID = "AC89b7e6a5a46679783b62f4d95ac8f118"
 TW_SECRET_KEY = "a91a7e67cc6d8242af61e15d8102246b"
 
 VM_CLIENT_ID = "1795"
