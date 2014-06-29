@@ -25,13 +25,12 @@
 /*  Fonts  */
 @font-face {
     font-family: 'open_regular';
-	color: #a71313;
     src: url('../fonts/opensans-regular.eot');
     src: url('../fonts/opensans-regular.eot?#iefix') format('embedded-opentype'),
          url('../fonts/opensans-regular.woff') format('woff'),
          url('../fonts/opensans-regular.ttf') format('truetype'),
          url('../fonts/opensans-regular.svg#LatoRegular') format('svg');
-    font-weight: BOLD;
+    font-weight: normal;
     font-style: normal;
 
 }
@@ -39,7 +38,6 @@
 
 @font-face {
     font-family: 'open_bold';
-	color: #a71313;
     src: url('../fonts/opensans-bold.eot');
     src: url('../fonts/opensans-bold.eot?#iefix') format('embedded-opentype'),
          url('../fonts/opensans-bold.woff') format('woff'),
@@ -53,7 +51,6 @@
 
 @font-face {
     font-family: 'open_semibold';
-	color: #a71313;
     src: url('../fonts/opensans-semibold.eot');
     src: url('../fonts/opensans-semibold.eot?#iefix') format('embedded-opentype'),
          url('../fonts/opensans-semibold.woff') format('woff'),
@@ -67,7 +64,6 @@
 
 @font-face {
     font-family: 'satellite';
-	color: #a71313;
     src: url('../fonts/satellite.eot');
     src: url('../fonts/satellite.eot?#iefix') format('embedded-opentype'),
          url('../fonts/satellite.woff') format('woff'),
@@ -134,15 +130,15 @@ header nav ul li{
 }
 
 header nav ul li a{
-	color: #a71313;
+	color: #4d4d4d;
 	text-decoration: none;
-	font-size: 20px;
-	font-family: 'open_semibold', tahoma;
+	font-size: 16px;
+	font-family: 'open_regular', arial;
 	border-bottom: 1px #ffffff solid;
 }
 
 header nav ul li a:hover{
-	border-bottom: 1px #ffffff solid;
+	border-bottom: 1px #4d4d4d solid;
 }
 
 
@@ -338,7 +334,7 @@ header nav ul li a:hover{
 	font-family: 'open_bold', arial;
 	font-weight: bold;
 	font-size: 16px;
-	color: #000000;
+	color: #fff;
 	text-align: center;
 	padding: 25px 0;
 	bottom: 0;
@@ -486,7 +482,7 @@ footer .f_cols h3{
 	font-family: 'open_semibold', arial;
 	font-weight: bold;
 	font-size: 18px;
-	color: #b92313;
+	color: #ffffff;
 	margin-bottom: 30px;
 	letter-spacing: 1px;
 }
