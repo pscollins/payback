@@ -73,7 +73,7 @@ def apply_bill_for(request_, amount):
         bill.save()
         twilio.send_auth_text(bill)
 
-    flash('%s got billed' %s ' '.join([u.name for u in users_to_bill]))
+    flash('Sent a bill to {}.'.format(", ".join([u.name for u in users_to_bill])))
     return len(users_to_bill)
 
 @app.route("/mobile", methods=["GET"])
