@@ -123,7 +123,6 @@ def register_user():
         person.save()
         login_user(person)
 
-
     resp = make_response(render_template("my_profile.html",
                                         success_message="Welcome!"))
 
@@ -151,6 +150,7 @@ def profile():
 
         # FLASH HERE OR WHATEVER
 
+    LOG.debug("current_user: ", current_user.__dict__)
     return render_template("my_profile.html", username=current_user.name)
 
 
