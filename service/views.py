@@ -58,6 +58,7 @@ def apply_bill_for(request_, amount):
     amt_per_person = float(amount)/len(users_to_bill)
 
     LOG.debug("me: ", current_user)
+    LOG.debug("me.__dict__", current_user.__dict__)
 
     # ADD IN CHECK SO YOU DON'T BILL ME
     for user in users_to_bill:
