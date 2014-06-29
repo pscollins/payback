@@ -123,7 +123,7 @@ def register_user():
 
     # set cookie so we can later know who uploads the file
     #resp.set_cookie("usernum", person.number)
-    login_user(person.number)
+    login_user(person)
 
 
     # RETURN "SUCESSFULLY REGISTERED" TEMPLATE
