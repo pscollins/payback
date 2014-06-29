@@ -54,12 +54,14 @@ def apply_bill_for(request_, amount):
     users_to_bill = [Person.objects(number=num)[0]
                      for num in nums_to_bill]
 
-    me = user_from_cookies(request.cookies)
-    amt_per_person = amount/len(users_to_bill)
+    # me = user_from_cookies(request.cookies)
+    amt_per_person = float(amount)/len(users_to_bill)
+
+    LOG.debug("me: ", current_user)
 
     # ADD IN CHECK SO YOU DON'T BILL ME
     for user in users_to_bill:
-        bill = Bill(to=me, from_=user, amount=amt_per_person)
+        bill = Bill(to=current_user, from_=user, amount=amt_per_person)
         bill.save()
         twilio.send_auth_text(bill)
 
