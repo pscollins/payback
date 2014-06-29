@@ -146,7 +146,7 @@ def logout():
 def profile():
     if request.method == "POST":
         #me = user_from_cookies(request.cookies)
-        add_training_imgs(current_user, request)
+        add_training_imgs(request, current_user)
 
 
 
