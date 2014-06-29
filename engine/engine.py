@@ -101,13 +101,17 @@ class TwilioClient(object):
     MSG_FMT = '''Hey {}!
     You owe {} ${:.2f}! Reply OK to authorize payment.
     '''
-
-    RESP_FMT = '''
+    BASE_FMT='''
     <?xml version="1.0" encoding="UTF-8"?>
     <Response>
-    <Message>Payment confirmed. Paid: {}.</Message>
+    <Message>{}.</Message>
     </Response>
     '''
+
+
+    RESP_FMT = BASE_FMT.format("Payment confirmed. Paid: {}")
+
+    REJ_FMT = BASE_FMT.format("Payment rejected. Paid: $0.00")
 
     def __init__(self,
                  tw_client_id=TW_CLIENT_ID,
@@ -131,12 +135,10 @@ class TwilioClient(object):
         return
 
     def process_twilreq(self, twilreq):
-        # FIND PERSON IN THE DB AND CHECK IF THEY HAVE OUTSTANDING
-        # PAYMENT
-
         # for Person.objects(number=twilreq.number):
 
-        if twilreq.body is "OK":
+        # FIX ME LATER TO DO SMART THINGS
+        if twilreq.body == "OK":
             to_bill_person = Person.objects(number=twilreq.number)
             if len(to_bill_person) > 1 or len(to_bill_person) == 0:
                 raise ImpossibleError
@@ -144,13 +146,16 @@ class TwilioClient(object):
             return to_bill_person, Bill.object(from_=to_bill_person[0])
 
         else:
-            return []
+            return None, []
 
     def payment_conf(self, person_billed, bills_paid):
         paid_msgs = ",".join(["To {}: ${:.2f}".format(b.to.name, b.amount)
                     for b in bills_paid])
 
         return self.RESP_FMT.format(paid_msgs)
+
+    def payment_rej(self,):
+        return self.REJ_FMT
 
 class SkyClient(object):
     NAMESPACE = "PayBackTest"

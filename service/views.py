@@ -71,13 +71,15 @@ def receive_text():
     params = request.args
     LOG.debug("got request: ", request)
     LOG.debug("request.args: ", request.args)
-    twilreq = TwilReq(params.get("From"), params.get("Body"))
+    twilreq = TwilReq(params.get("From").strip("+"), params.get("Body"))
 
-    bills, person_billed = twilio.process_twilreq(twilreq)
+    person_billed, bills = twilio.process_twilreq(twilreq)
 
-    venmo.make_payments(person_billed, [b.to for b in bills])
-
-    return twilio.payment_conf(person_billed, bills)
+    if person_billed is not None:
+        venmo.make_payments(person_billed, [b.to for b in bills])
+        return twilio.payment_conf(person_billed, bills)
+    else:
+        return twilio.payment_rej()
 
 @app.route("/code_recv", methods=["GET"])
 def register_user():
