@@ -64,7 +64,7 @@ def apply_bill_for(request_, amount):
 def render_simple_upload():
     return render_template("simple_upload.html")
 
-@app.route("mobile_upload", methods=["POST"])
+@app.route("/mobile_upload", methods=["POST"])
 def apply_uploaded_file():
     amount = request.data.get("amount")
     LOG.debug("amount: ", amount)
