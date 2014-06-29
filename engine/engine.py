@@ -132,7 +132,7 @@ class TwilioClient(object):
         LOG.debug("person_to.number ", to_num)
         LOG.debug("self.OUR_NUM ", self.OUR_NUM)
 
-        message = self.twilio.sms.messages.create(
+        message = self.twilio.messages.create(
             body=self.MSG_FMT.format(
                 person_to.name,
                 person_from.name,
