@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 from twilio.rest import TwilioRestClient
 import collections
+import requests
 
-from engine_cfg import TW_CLIENT_ID, TW_SECRET_KEY
+from engine_cfg import TW_CLIENT_ID, TW_SECRET_KEY, \
+    VM_SECRET_KEY, VM_CLIENT_ID
 from utils import easylogger
 
 LOG = easylogger.LOG
@@ -10,10 +12,84 @@ LOG = easylogger.LOG
 # TEMP
 Person = collections.namedtuple("Person", ["number",
                                            "name",
-                                           "has_outstanding"])
+                                           "email",
+                                           "access_token"
+                                           ])
 TwilReq = collections.namedtuple("TwilReq", ["from", "body"])
 
-class Engine(object):
+class VenmoClient(object):
+    BASE_URL = "https://api.venmo.com/v1"
+    DEFAULT_NOTE = "Payment from {} via Pay Back."
+
+    def __init__(self, client_id, secret_key):
+        self.client_id = client_id
+        self.secret_key = secret_key
+
+    def get_auth_url(self):
+        to_send = [self.BASE_URL, "oauth/authorize"].join("/")
+
+        # send us back to our redirect uri and let us get a new token
+        params = {
+            "client_id": self.client_id,
+            "scope": "make_payments access_phone access_friends",
+            "response_type": "code"
+        }
+
+        req = requests.get(to_send, params=params)
+
+        LOG.debug("request sent: ", req)
+        LOG.debug("req.url: ", req.url,
+                  ", req.code: ", req.status_code)
+
+    def person_from_auth_code(self, auth_code):
+        to_send = [self.BASE_URL, "oauth/access_token"].join("/")
+
+        data = {
+            "client_id": self.client_id,
+            "client_secret": self.client_secret,
+            "code": auth_code
+        }
+
+        req = requests.post(to_send, data=data)
+
+        LOG.debug("request sent: ", req)
+        LOG.debug("req.url: ", req.url,
+                  ", req.code: ", req.status_code)
+
+        info = req.json()
+        LOG.debug("req.json(): ", info)
+
+        return Person(number=info["number"],
+                      name=info["name"],
+                      email=info["email"],
+                      access_token=info["access_token"])
+
+    # Person * Person... -> void
+    def make_payments(self, amount, to, *froms):
+        for from_ in froms:
+            self._make_payment(amout, to, from_)
+
+    # Person * Person -> void
+    def _make_payment(self, amount, to, from_):
+        to_send = [self.BASE_URL, "payments"].join('/')
+
+        data = {
+            "access_token": from_.access_token,
+            "email": to.email,
+            "amount": amount,
+            "note": self.DEFAULT_NODE.format(to.name)
+        }
+
+        req = requests.post(to_send, data=data)
+
+        LOG.debug("request sent: ", req)
+        LOG.debug("req.url: ", req.url,
+                  ", req.code: ", req.status_code)
+
+
+
+
+class Twilio(object):
     MSG_FMT = '''Hey {}!
     You owe {} ${:.2f}! Reply OK to authorize payment.
     '''
@@ -29,7 +105,6 @@ class Engine(object):
                  tw_client_id=TW_CLIENT_ID,
                  tw_secret_key=TW_SECRET_KEY):
         self.twilio = TwilioRestClient(tw_client_id, tw_secret_key)
-        self.venmo = None
 
 
     def send_auth_text(self, amount, person_to, person_from):
