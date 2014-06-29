@@ -128,7 +128,7 @@ class TwilioClient(object):
                 person_to.name,
                 person_from.name,
                 amount),
-            to=person_to.number
+            to=person_to.number)
             # from_)
             # from_=person_from.number)
 
