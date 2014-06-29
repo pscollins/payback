@@ -136,6 +136,8 @@ class TwilioClient(object):
 
     def process_twilreq(self, twilreq):
         # for Person.objects(number=twilreq.number):
+        LOG.debug("inside process_twilreq")
+        LOG.debug("twilreq: ", twilreq)
 
         # FIX ME LATER TO DO SMART THINGS
         if twilreq.body == "OK":
