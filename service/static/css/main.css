@@ -3,11 +3,11 @@
 	Template Author : pixelhint.com
 	Author Email    : contact@pixelhint.com
 	Template Name   : Minima
-	
-	
+
+
 	*****************************************
-	
-	
+
+
 	- Header
 	- Billboard
 	- Services
@@ -17,7 +17,7 @@
 	- Social Media Icons
 	- Footer
 	- Subsciption pop-up
-	
+
 */
 
 
@@ -151,7 +151,7 @@ header nav ul li a:hover{
 	text-align: center;
 	position: relative;
 	overflow: hidden;
-	
+
     background-size: cover;
     -webkit-background-size: cover;
     -moz-background-size: cover;
@@ -165,21 +165,21 @@ header nav ul li a:hover{
 .billboard .caption .cap_title{
 	font-family: 'satellite', arial;
 	font-size: 50px;
-	color: #FFFFFF;
+	color: #4d4d4d;
 	margin-bottom: 30px;
 }
 
 .billboard .caption .cap_desc{
 	font-family: 'open_regular', arial;
 	font-size: 16px;
-	color: #FFFFFF;
-	margin-bottom: 60px;	
+	color: #4d4d4d;
+	margin-bottom: 60px;
 }
 
 .billboard .caption a{
 	padding: 15px 80px;
-	background: #FFFFFF;
-	color: #ffffff;
+	background: #4d4d4d;
+	color: #fff;
 	font-family: 'open_semibold', arial;
 	font-weight: bold;
 	font-size: 18px;
@@ -194,7 +194,7 @@ header nav ul li a:hover{
 
 .billboard .caption a:hover{
 	background: #ffffff;
-	color: #ffffff;
+	color: #4d4d4d;
 }
 
 
@@ -256,7 +256,7 @@ header nav ul li a:hover{
 /*  Video  */
 .video{
 	text-align: center;
-	border-top: 1px #e7e7e7 solid; 
+	border-top: 1px #e7e7e7 solid;
 	border-bottom: 1px #e7e7e7 solid;
 	margin-bottom: 100px;
 	padding-top: 100px;
@@ -608,13 +608,13 @@ footer .f_cols ul li a:hover{
 }
 
 :-moz-placeholder { /* Firefox 18- */
-   color: #d1d0d0;  
+   color: #d1d0d0;
 }
 
 ::-moz-placeholder {  /* Firefox 19+ */
-   color: #d1d0d0;  
+   color: #d1d0d0;
 }
 
-:-ms-input-placeholder {  
-   color: #d1d0d0;  
+:-ms-input-placeholder {
+   color: #d1d0d0;
 }
