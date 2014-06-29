@@ -140,6 +140,8 @@ class TwilioClient(object):
         # FIX ME LATER TO DO SMART THINGS
         if twilreq.body == "OK":
             to_bill_person = Person.objects(number=twilreq.from_)
+            LOG.debug("to_bill_person: ",
+                      to_bill_person.__dict__)
             if len(to_bill_person) > 1 or len(to_bill_person) == 0:
                 raise ImpossibleError
 
