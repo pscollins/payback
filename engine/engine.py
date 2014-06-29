@@ -112,7 +112,7 @@ class TwilioClient(object):
 
     REJ_FMT = BASE_FMT.format("Payment rejected. Paid: $0.00")
 
-    OUR_NUM = "+16466473401"
+    OUR_NUM = "16466473401"
 
     def __init__(self,
                  tw_client_id=TW_CLIENT_ID,
@@ -124,7 +124,7 @@ class TwilioClient(object):
         amount = bill.amount
         person_to = bill.to
         person_from = bill.from_
-        message = self.twilio.sms.messages.create(
+        message = self.twilio.messages.create(
             body=self.MSG_FMT.format(
                 person_to.name,
                 person_from.name,
