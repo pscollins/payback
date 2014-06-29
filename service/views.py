@@ -26,7 +26,6 @@ def load_user(phone_number):
     return Person.objects(number=phone_number).first()
 
 
-@easylogger.log_at(logging.DEBUG)
 @app.route("/proc_file", methods=["GET", "POST"])
 def add_training_imgs(request_, user):
     files_dict = request_.files
@@ -39,6 +38,10 @@ def add_training_imgs(request_, user):
     # if manager.process(files_dict):
 
     return "SUCCESS"
+
+@app.route("/upload_test", method=["GET"])
+def test_upload():
+    return render_template("temp.html")
 
 def apply_bill_for(request_, amount):
     files_dict = request_.files
