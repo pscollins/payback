@@ -176,7 +176,7 @@ class TwilioClient(object):
 
 class SkyClient(object):
     NAMESPACE = "PayBackTest"
-    MIN_CONF = 40
+    MIN_CONF = 5
 
     def __init__(self, client_id=SB_CLIENT_ID,
                  secret_key=SB_SECRET_KEY):
