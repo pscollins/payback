@@ -121,13 +121,13 @@ def register_user():
     else:
         # COMMIT PERSON TO DB
         person.save()
+<<<<<<< HEAD
+=======
+        login_user(person)
+>>>>>>> 4660946a962a3029c26227f0ea453a9b22224d01
 
     resp = make_response(render_template("my_profile.html",
                                         success_message="Welcome!"))
-
-    # set cookie so we can later know who uploads the file
-    #resp.set_cookie("usernum", person.number)
-    login_user(person)
 
 
     # RETURN "SUCESSFULLY REGISTERED" TEMPLATE
