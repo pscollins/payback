@@ -124,6 +124,10 @@ class TwilioClient(object):
         amount = bill.amount
         person_to = bill.to
         person_from = bill.from_
+
+        LOG.debug("person_to.number ", person_to.number)
+        LOG.debug("self.OUR_NUM ", self.OUR_NUM)
+
         message = self.twilio.messages.create(
             body=self.MSG_FMT.format(
                 person_to.name,
