@@ -141,7 +141,7 @@ def logout():
 
 
 @app.route("/profile", methods=["GET", "POST"])
-@login_required
+#@login_required
 def profile():
     if request.method == "POST":
         #me = user_from_cookies(request.cookies)
