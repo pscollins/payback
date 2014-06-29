@@ -47,8 +47,18 @@
 =======
 			<ul>
 			  <li>
-			    <a href="">link your Facebook to upload profile images</a> OR <a href="{{url_for('add_training_imgs')}}">upload your photos</a></li>
+			    <a href="">link your Facebook to upload profile images</a>
+			  </li>
+			  
 			  <li><a href="{{url_for('render_simple_upload')}}">create a bill</a></li>
+
+			  <li>
+			    <form method="POST" action="" enctype="multipart/form-data">
+			      <input type="file" name="set" multiple>
+			      <input type="submit" value="upload">
+			    </form>
+			  </li>
+
 			  <li><a href="{{url_for('logout')}}">logout</a></li>
 			</ul>
 >>>>>>> d6b065a8241873723f01502a4cbc3c6ba9c05083
