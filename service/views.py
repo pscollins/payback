@@ -69,7 +69,7 @@ def apply_uploaded_file():
     LOG.debug("forwarding request: ", request)
     LOG.debug("request.data: ", request.data)
     LOG.debug("request.__dict__", request.__dict__)
-    amount = request.data.get("amount")
+    amount = request.form.get("amount")
     LOG.debug("amount: ", amount)
 
     return apply_bill_for(request, amount)
