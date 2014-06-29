@@ -2,9 +2,11 @@
 from twilio.rest import TwilioRestClient
 import collections
 import requests
+import face_client
 
 from engine_cfg import TW_CLIENT_ID, TW_SECRET_KEY, \
-    VM_SECRET_KEY, VM_CLIENT_ID
+    VM_SECRET_KEY, VM_CLIENT_ID, \
+    SB_CLIENT_ID, SB_SECRET_KEY
 from utils import easylogger
 from service.models import Person, Bill
 
@@ -146,3 +148,29 @@ class TwilioClient(object):
                     for b in bills_paid])
 
         return self.RESP_FMT.format(paid_msgs)
+
+class SkyBio(object):
+    NAMESPACE = "TestPayBack"
+
+    def __init__(self, client_id=SB_CLIENT_ID,
+                 secret_key=SB_SECRET_KEY):
+        self.client = face_client.FaceClient(client_id, secret_key)
+
+    # this is their format for whatever reason
+    def _qualify(self, ident):
+        return "{}@{}".format(ident, self.NAMESPACE)
+
+    # match on person.number b/c unique
+    def train_for_user(self, person, *images):
+        resps = [self.client.faces_detect(file=im) for im in images]
+
+        # let's hope it only picked up one face
+        tids = [resp['tags'][0]['tid'] for resp in resps]
+
+
+        self.client.tags_save(tids=",".join(tids),
+                              uid=self._qualify(person.number),
+                              label=person.name)
+
+        # LONG RUNNING!! and asynchronous
+        self.client.faces_train(self._qualify(person.number))
