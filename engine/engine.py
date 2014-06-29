@@ -119,6 +119,8 @@ class TwilioClient(object):
                  tw_secret_key=TW_SECRET_KEY):
         self.twilio = TwilioRestClient(tw_client_id, tw_secret_key)
 
+    def _plusify(self, num):
+        return ("+{}" if not "+" in num else "{}").format(num)
 
     def send_auth_text(self, bill):
         amount = bill.amount
@@ -133,7 +135,7 @@ class TwilioClient(object):
                 person_to.name,
                 person_from.name,
                 amount),
-            to=person_to.number,
+            to=self._plusify(person_to.number),
             from_=self.OUR_NUM)
 
             # from_)
