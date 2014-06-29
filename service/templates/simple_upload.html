@@ -1,13 +1,29 @@
+<!DOCTYPE html>
+<html>
 <head>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
+    
+    <title>New Bill : PayBack</title>
+    
+    <link rel="stylesheet" href="/css/normalize.css">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/base.css">
+    <script src="/js/vendor/modernizr-2.7.1.min.js"></script>
 </head>
 
 <body>
-<form action="mobile_upload" method="post"
-enctype="multipart/form-data">
-<label for="file">Filename:</label>
-<input type="file" name="to_ident" id="file"><br>
-<input type="number" name="amount">
-<input type="submit" name="submit" value="Submit">
-</form>
+  <form action="/mobile_upload" method="post"
+	enctype="multipart/form-data">
+    <label for="file">Group Picture</label><input type="file" name="to_ident" id="file"><br>
+    <input type="number" name="amount">
+    <input type="submit" name="submit" value="Submit">
+  </form>
 
 </body>
+
+</html>
