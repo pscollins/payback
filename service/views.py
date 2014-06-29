@@ -26,8 +26,8 @@ def load_user(phone_number):
     return Person.objects(number=phone_number).first()
 
 
-@easylogger.log_at(logging.DEBUG)
-@app.route("/proc_file", methods=["GET", "POST"])
+# @easylogger.log_at(logging.DEBUG)
+# @app.route("/proc_file", methods=["GET", "POST"])
 def add_training_imgs(request_, user):
     files_dict = request_.files
     LOG.error("request: ", request.__dict__)
@@ -147,8 +147,8 @@ def profile():
     if request.method == "POST":
         #me = user_from_cookies(request.cookies)
         add_training_imgs(current_user, request)
+        
 
-        # FLASH HERE OR WHATEVER
 
     return render_template("my_profile.html", username=current_user.name)
 
