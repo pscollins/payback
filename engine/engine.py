@@ -6,22 +6,27 @@ import requests
 from engine_cfg import TW_CLIENT_ID, TW_SECRET_KEY, \
     VM_SECRET_KEY, VM_CLIENT_ID
 from utils import easylogger
+from service.models import Person, Bill
 
 LOG = easylogger.LOG
 
+class ImpossibleError(Exception):
+    pass
+
 # TEMP
-Person = collections.namedtuple("Person", ["number",
-                                           "name",
-                                           "email",
-                                           "access_token"
-                                           ])
-TwilReq = collections.namedtuple("TwilReq", ["from", "body"])
+# Person = collections.namedtuple("Person", ["number",
+#                                            "name",
+#                                            "email",
+#                                            "access_token"
+#                                            ])
+TwilReq = collections.namedtuple("TwilReq", ["from_", "body"])
 
 class VenmoClient(object):
     BASE_URL = "https://api.venmo.com/v1"
     DEFAULT_NOTE = "Payment from {} via Pay Back."
 
-    def __init__(self, client_id, secret_key):
+    def __init__(self, client_id=VM_CLIENT_ID,
+                 secret_key=VM_SECRET_KEY):
         self.client_id = client_id
         self.secret_key = secret_key
 
@@ -87,9 +92,7 @@ class VenmoClient(object):
                   ", req.code: ", req.status_code)
 
 
-
-
-class Twilio(object):
+class TwilioClient(object):
     MSG_FMT = '''Hey {}!
     You owe {} ${:.2f}! Reply OK to authorize payment.
     '''
@@ -123,7 +126,14 @@ class Twilio(object):
         # FIND PERSON IN THE DB AND CHECK IF THEY HAVE OUTSTANDING
         # PAYMENT
 
-        # IF THEY DO, PROCESS IT
+        # for Person.objects(number=twilreq.number):
 
-        # FINALLY
-        return self.RESP_FMT
+        if twilreq.body = "OK":
+            to_bill_person = Person.objects(number=twilreq.number)
+            if len(to_bills) > 1 or len(to_bills) == 0:
+                raise ImpossibleError
+
+            return Bill.object(from_=to_bill_person[0])
+
+        else:
+            return []
