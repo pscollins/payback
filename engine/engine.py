@@ -115,7 +115,10 @@ class TwilioClient(object):
         self.twilio = TwilioRestClient(tw_client_id, tw_secret_key)
 
 
-    def send_auth_text(self, amount, person_to, person_from):
+    def send_auth_text(self, bill):
+        amount = bill.amount
+        person_to = bill.to
+        person_from = bill.from_
         message = self.twilio.sms.messages.create(
             body=self.MSG_FMT.format(
                 person_to.name,
@@ -150,7 +153,8 @@ class TwilioClient(object):
         return self.RESP_FMT.format(paid_msgs)
 
 class SkyBio(object):
-    NAMESPACE = "TestPayBack"
+    NAMESPACE = "PayBackTest"
+    MIN_CONF = 40
 
     def __init__(self, client_id=SB_CLIENT_ID,
                  secret_key=SB_SECRET_KEY):
@@ -160,17 +164,53 @@ class SkyBio(object):
     def _qualify(self, ident):
         return "{}@{}".format(ident, self.NAMESPACE)
 
+    def _unqualify(self, ident):
+        return ident.split("@")[0]
+
     # match on person.number b/c unique
     def train_for_user(self, person, *images):
+        LOG.debug("Sending to faces_detect")
+
         resps = [self.client.faces_detect(file=im) for im in images]
 
-        # let's hope it only picked up one face
-        tids = [resp['tags'][0]['tid'] for resp in resps]
+        LOG.debug("Got responses: ", resps)
 
+        for resp in resps:
+            LOG.debug("resp: ", resp)
+
+        # let's hope it only picked up one face
+        tids = [resp['photos'][0]['tags'][0]['tid'] for resp in resps]
+
+        LOG.debug("found tids: ", tids)
+        LOG.debug("saving tags")
 
         self.client.tags_save(tids=",".join(tids),
                               uid=self._qualify(person.number),
                               label=person.name)
 
+        LOG.debug("Training....")
         # LONG RUNNING!! and asynchronous
         self.client.faces_train(self._qualify(person.number))
+
+    def find_user_numbers_in(self, image):
+        resp = self.client.faces_recognize("all",
+                                           file=image,
+                                           namespace=self.NAMESPACE)
+
+        LOG.debug("resp: ", resp)
+
+        to_return = []
+
+        for tag in resp['photos'][0]['tags']:
+            LOG.debug("checking tag: ", tag)
+            if tag['uids']:
+                LOG.debug(tag['uids'])
+
+                candidate = max(tag['uids'],
+                                key=lambda x: x['confidence'])
+                if candidate['confidence'] >= self.MIN_CONF:
+                    to_return.append(self._unqualify(candidate['uid']))
+
+        LOG.debug("got user phone numbers: ", to_return)
+
+        return to_return
