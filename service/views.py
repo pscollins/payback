@@ -66,6 +66,19 @@ def apply_bill_for(request_, amount):
     # RETURN SOME SUCCESS INDICATOR
     return ""
 
+@app.route("/mobile", methods=["GET"])
+def render_simple_upload():
+    return render_template("simple_upload.html")
+
+@app.route("/mobile_upload", methods=["POST"])
+def apply_uploaded_file():
+    LOG.debug("forwarding request: ", request)
+    LOG.debug("request.data: ", request.data)
+    LOG.debug("request.__dict__", request.__dict__)
+    amount = request.data.get("amount")
+    LOG.debug("amount: ", amount)
+
+    return apply_bill_for(request, amount)
 
 @app.route("/", methods=["GET"])
 def render_login():
@@ -78,13 +91,17 @@ def render_login():
 @app.route("/text_recv", methods=["GET"])
 def receive_text():
     params = request.args
-    twilreq = TwilReq(params.get("From"), params.get("Body"))
+    LOG.debug("got request: ", request)
+    LOG.debug("request.args: ", request.args)
+    twilreq = TwilReq(params.get("From").strip("+"), params.get("Body"))
 
-    bills, person_billed = twilio.process_twilreq(twilreq)
+    person_billed, bills = twilio.process_twilreq(twilreq)
 
-    venmo.make_payments(person_billed, [b.to for b in bills])
-
-    return twilio.payment_conf(person_billed, bills)
+    if person_billed is not None:
+        venmo.make_payments(person_billed, [b.to for b in bills])
+        return twilio.payment_conf(person_billed, bills)
+    else:
+        return twilio.payment_rej()
 
 @app.route("/code_recv", methods=["GET"])
 def register_user():
