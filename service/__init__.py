@@ -2,6 +2,7 @@
 
 from flask import Flask
 from flask.ext.mongoengine import MongoEngine
+from flask.ext.login import LoginManager
 
 app = Flask(__name__, static_url_path='')
 
@@ -11,7 +12,9 @@ app = Flask(__name__, static_url_path='')
 # debug with remtoe mongoDB
 app.config.from_pyfile('./remote-dev.cfg')
 
-# def init_db():
 db = MongoEngine(app)
+
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 import views
