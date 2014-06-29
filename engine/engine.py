@@ -126,8 +126,9 @@ class TwilioClient(object):
         amount = bill.amount
         person_to = bill.to
         person_from = bill.from_
+        to_num = self._plusify(person_to.number)
 
-        LOG.debug("person_to.number ", person_to.number)
+        LOG.debug("person_to.number ", to_num)
         LOG.debug("self.OUR_NUM ", self.OUR_NUM)
 
         message = self.twilio.messages.create(
@@ -135,7 +136,7 @@ class TwilioClient(object):
                 person_to.name,
                 person_from.name,
                 amount),
-            to=self._plusify(person_to.number),
+            to=self._plusify(to_num),
             from_=self.OUR_NUM)
 
             # from_)
