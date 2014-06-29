@@ -48,7 +48,7 @@ def apply_bill_for(request_, amount):
 
     # assert len(files_dict) == 1
 
-    nums_to_bill = sky.find_user_numbers_in(files_dict.get("SOMEKEY???"))
+    nums_to_bill = sky.find_user_numbers_in(files_dict.get("to_ident"))
 
     # CAN WE DO THIS MORE ELEGANTLY????????
     users_to_bill = [Person.objects(number=num)[0]
