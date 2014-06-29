@@ -165,21 +165,21 @@ header nav ul li a:hover{
 .billboard .caption .cap_title{
 	font-family: 'satellite', arial;
 	font-size: 50px;
-	color: #4d4d4d;
+	color: #FFFFFF;
 	margin-bottom: 30px;
 }
 
 .billboard .caption .cap_desc{
 	font-family: 'open_regular', arial;
 	font-size: 16px;
-	color: #4d4d4d;
+	color: #FFFFFF;
 	margin-bottom: 60px;	
 }
 
 .billboard .caption a{
 	padding: 15px 80px;
-	background: #4d4d4d;
-	color: #fff;
+	background: #000000;
+	color: #ffffff;
 	font-family: 'open_semibold', arial;
 	font-weight: bold;
 	font-size: 18px;
@@ -194,7 +194,7 @@ header nav ul li a:hover{
 
 .billboard .caption a:hover{
 	background: #ffffff;
-	color: #4d4d4d;
+	color: #000000;
 }
 
 
@@ -482,7 +482,7 @@ footer .f_cols h3{
 	font-family: 'open_semibold', arial;
 	font-weight: bold;
 	font-size: 18px;
-	color: #8d1d1b;
+	color: #ffffff;
 	margin-bottom: 30px;
 	letter-spacing: 1px;
 }
