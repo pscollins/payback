@@ -21,7 +21,7 @@ sky = SkyClient()
 
 
 # set up login manager
-@login_manager.user_loader
+# @login_manager.user_loader
 def load_user(phone_number):
     return Person.objects(number=phone_number).first()
 
@@ -54,7 +54,7 @@ def apply_bill_for(request_, amount):
     users_to_bill = [Person.objects(number=num)[0]
                      for num in nums_to_bill]
 
-    # me = user_from_cookies(request.cookies)
+    me = user_from_cookies(request.cookies)
     amt_per_person = float(amount)/len(users_to_bill)
 
     LOG.debug("me: ", current_user)
@@ -62,7 +62,7 @@ def apply_bill_for(request_, amount):
 
     # ADD IN CHECK SO YOU DON'T BILL ME
     for user in users_to_bill:
-        bill = Bill(to=current_user, from_=user, amount=amt_per_person)
+        bill = Bill(to=me, from_=user, amount=amt_per_person)
         bill.save()
         twilio.send_auth_text(bill)
 
@@ -121,7 +121,7 @@ def register_user():
     else:
         # COMMIT PERSON TO DB
         person.save()
-        login_user(person)
+        # login_user(person)
 
     resp = make_response(render_template("my_profile.html",
                                         success_message="Welcome!"))
@@ -136,9 +136,9 @@ def logout():
     return redirect(url_for('render_login'))
 
 
-# def user_from_cookies(cookies):
-#     usernum = cookies.get("usernum")
-#     return Person.objects(number=usernum)[0]
+def user_from_cookies(cookies):
+    usernum = cookies.get("usernum")
+    return Person.objects(number=usernum).first()
 
 
 @app.route("/profile", methods=["GET", "POST"])
