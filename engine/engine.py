@@ -152,7 +152,7 @@ class TwilioClient(object):
 
         return self.RESP_FMT.format(paid_msgs)
 
-class SkyBio(object):
+class SkyClient(object):
     NAMESPACE = "PayBackTest"
     MIN_CONF = 40
 
