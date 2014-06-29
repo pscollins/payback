@@ -43,7 +43,7 @@ def add_training_imgs(request_, user):
 def apply_bill_for(request_, amount):
     files_dict = request_.files
 
-    LOG.debug("about to apply bill on ", files_dict.__dict)
+    LOG.debug("about to apply bill on ", files_dict)
     LOG.debug("for amount: ", amount)
 
     # assert len(files_dict) == 1
