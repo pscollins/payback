@@ -65,7 +65,7 @@ def apply_bill_for(request_, amount):
 
     # ADD IN CHECK SO YOU DON'T BILL ME
     for user in users_to_bill:
-        bill = Bill(to=current_user.id, from_=user, amount=amt_per_person)
+        bill = Bill(from_=current_user.id, to=user, amount=amt_per_person)
         bill.save()
         twilio.send_auth_text(bill)
 
