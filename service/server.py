@@ -60,8 +60,12 @@ def register_user():
     person.save()
 
     # RETURN "SUCESSFULLY REGISTERED" TEMPLATE
-    return "SUCCESS"
+    return render_template("my_profile.html",
+                           success_message="Welcome!")
 
+@app.route("/profile", methods=["GET"])
+def profile():
+    return render_template("my_profile.html")
 
 
 if __name__ == "__main__":

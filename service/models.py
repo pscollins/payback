@@ -6,9 +6,12 @@ from service import app, db
 
 class Person(db.Document):
     name = db.StringField(required=True)
-    number = db.StringField(required=True, unique=True)
+    # number = db.StringField(required=True, unique=True)
+    # FUCKS UP TESTING
+    number = db.StringField(required=True)
     access_token = db.StringField(required=True)
     email = db.EmailField(required=True)
+    friends = db.ListField(db.ReferenceField('Person'))
 
     portraits = db.ListField(db.ImageField())
     bills_owed = db.ListField(db.ReferenceField('Bill'))
