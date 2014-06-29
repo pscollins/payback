@@ -106,6 +106,7 @@ def receive_text():
     else:
         return twilio.payment_rej()
 
+
 @app.route("/code_recv", methods=["GET"])
 def register_user():
     # venmo OAuth
@@ -116,19 +117,22 @@ def register_user():
 
     person = venmo.person_from_auth_code(auth_code)
     x = Person.objects(number=person.number).first()
-    if x:
-        login_user(x)
-    else:
+    if not x:
+    #     login_user(x)
+    # else:
         # COMMIT PERSON TO DB
         person.save()
-        # login_user(person)
+    # login_user(person)
 
     resp = make_response(render_template("my_profile.html",
                                         success_message="Welcome!"))
 
+    resp.set_cookie("usernum", person.number)
 
     # RETURN "SUCESSFULLY REGISTERED" TEMPLATE
     return redirect(url_for('profile'))
+
+
 
 @app.route('/logout')
 def logout():
@@ -145,13 +149,14 @@ def user_from_cookies(cookies):
 #@login_required
 def profile():
     if request.method == "POST":
-        #me = user_from_cookies(request.cookies)
+        me = user_from_cookies(request.cookies)
         add_training_imgs(current_user, request)
 
         # FLASH HERE OR WHATEVER
 
     LOG.debug("current_user: ", current_user.__dict__)
-    return render_template("my_profile.html", username=current_user.name)
+    return render_template("my_profile.html",
+                           username=me.name)
 
 
 if __name__ == "__main__":
