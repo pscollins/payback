@@ -1,5 +1,5 @@
 import logging
-import requests
+# import requests
 
 from flask import Flask, request, render_template
 
@@ -50,7 +50,7 @@ def receive_text():
 
 @app.route("/code_recv", methods=["GET"])
 def register_user():
-    auth_code = requests.args.get("code")
+    auth_code = request.args.get("code")
 
     LOG.debug("auth_code: ", auth_code)
 
@@ -59,8 +59,8 @@ def register_user():
     # COMMIT PERSON TO DB
     person.save()
 
-    # RETURN SOME "SUCESSFULLY REGISTERED" MESSAGE
-    return ""
+    # RETURN "SUCESSFULLY REGISTERED" TEMPLATE
+    return "SUCCESS"
 
 
 

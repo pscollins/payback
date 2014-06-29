@@ -31,7 +31,7 @@ class VenmoClient(object):
         self.secret_key = secret_key
 
     def get_auth_url(self):
-        to_send = [self.BASE_URL, "oauth/authorize"].join("/")
+        to_send = "/".join([self.BASE_URL, "oauth/authorize"])
 
         # send us back to our redirect uri and let us get a new token
         params = {
@@ -46,12 +46,14 @@ class VenmoClient(object):
         LOG.debug("req.url: ", req.url,
                   ", req.code: ", req.status_code)
 
+        return req.url
+
     def person_from_auth_code(self, auth_code):
-        to_send = [self.BASE_URL, "oauth/access_token"].join("/")
+        to_send = "/".join([self.BASE_URL, "oauth/access_token"])
 
         data = {
             "client_id": self.client_id,
-            "client_secret": self.client_secret,
+            "client_secret": self.secret_key,
             "code": auth_code
         }
 
@@ -64,9 +66,10 @@ class VenmoClient(object):
         info = req.json()
         LOG.debug("req.json(): ", info)
 
-        return Person(number=info["number"],
-                      name=info["name"],
-                      email=info["email"],
+
+        return Person(number=info["user"]["phone"],
+                      name=info["user"]["display_name"],
+                      email=info["user"]["email"] or "none@none.none",
                       access_token=info["access_token"])
 
     # Person * Person... -> void
@@ -76,7 +79,7 @@ class VenmoClient(object):
 
     # Person * Person -> void
     def _make_payment(self, amount, to, from_):
-        to_send = [self.BASE_URL, "payments"].join('/')
+        to_send = "/".join([self.BASE_URL, "payments"])
 
         data = {
             "access_token": from_.access_token,
@@ -139,7 +142,7 @@ class TwilioClient(object):
             return []
 
     def payment_conf(self, person_billed, bills_paid):
-        paid_msgs = ["To {}: ${:.2f}".format(b.to.name, b.amount)
-                    for b in bills_paid].join(",")
+        paid_msgs = ",".join(["To {}: ${:.2f}".format(b.to.name, b.amount)
+                    for b in bills_paid])
 
         return self.RESP_FMT.format(paid_msgs)
