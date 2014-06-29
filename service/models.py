@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 from service import app, db
 
+# BE AWARE THAT TWILIO AND VENMO FORMAT PHONE NUMBERS DIFFERENTLY AND
+# THAT THIS MAY FUCK UP
+
 class Person(db.Document):
     name = db.StringField(required=True)
     number = db.StringField(required=True, unique=True)

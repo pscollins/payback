@@ -6,7 +6,7 @@ from flask import Flask, request, render_template
 from manager import Manager
 from utils import easylogger
 from service import app#, db
-from engine.engine import TwilioClient, VenmoClient
+from engine.engine import TwilioClient, VenmoClient, TwilReq
 
 manager = Manager()
 LOG = easylogger.LOG
@@ -34,14 +34,19 @@ def proc_file():
 
 @app.route("/", methods=["GET"])
 def render_login():
-    return render_template("index.html")
+    return render_template("index.html",
+                           register_url=venmo.get_auth_url())
 
 @app.route("/text_recv", methods=["GET"])
 def receive_text():
     params = request.args
     twilreq = TwilReq(params.get("From"), params.get("Body"))
 
-    return twilio.process_twilreq(twilreq)
+    bills, person_billed = twilio.process_twilreq(twilreq)
+
+    venmo.make_payments(person_billed, [b.to for b in bills])
+
+    return twilio.payment_conf(person_billed, bills)
 
 @app.route("/code_recv", methods=["GET"])
 def register_user():

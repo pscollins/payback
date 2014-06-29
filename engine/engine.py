@@ -72,7 +72,7 @@ class VenmoClient(object):
     # Person * Person... -> void
     def make_payments(self, amount, to, *froms):
         for from_ in froms:
-            self._make_payment(amout, to, from_)
+            self._make_payment(amount, to, from_)
 
     # Person * Person -> void
     def _make_payment(self, amount, to, from_):
@@ -100,7 +100,7 @@ class TwilioClient(object):
     RESP_FMT = '''
     <?xml version="1.0" encoding="UTF-8"?>
     <Response>
-    <Message>Payment confirmed.</Message>
+    <Message>Payment confirmed. Paid: {}.</Message>
     </Response>
     '''
 
@@ -128,12 +128,18 @@ class TwilioClient(object):
 
         # for Person.objects(number=twilreq.number):
 
-        if twilreq.body = "OK":
+        if twilreq.body is "OK":
             to_bill_person = Person.objects(number=twilreq.number)
-            if len(to_bills) > 1 or len(to_bills) == 0:
+            if len(to_bill_person) > 1 or len(to_bill_person) == 0:
                 raise ImpossibleError
 
-            return Bill.object(from_=to_bill_person[0])
+            return to_bill_person, Bill.object(from_=to_bill_person[0])
 
         else:
             return []
+
+    def payment_conf(self, person_billed, bills_paid):
+        paid_msgs = ["To {}: ${:.2f}".format(b.to.name, b.amount)
+                    for b in bills_paid].join(",")
+
+        return self.RESP_FMT.format(paid_msgs)
