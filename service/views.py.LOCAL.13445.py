@@ -1,7 +1,7 @@
 import logging
 # import requests
 
-from flask import Flask, request, render_template, make_response, redirect, url_for, flash
+from flask import Flask, request, render_template, make_response, redirect, url_for
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from manager import Manager
 from utils import easylogger
@@ -34,12 +34,12 @@ def add_training_imgs(request_, user):
     for name in files_dict:
         LOG.debug("file name: ", name)
 
-    sky.train_for_user(user, request.files.get("set"))
+    sky.train_for_user(user, request.files)
     # if manager.process(files_dict):
 
     return "SUCCESS"
 
-@app.route("/upload_test", methods=["GET"])
+@app.route("/upload_test", method=["GET"])
 def test_upload():
     return render_template("temp.html")
 
@@ -58,10 +58,6 @@ def apply_bill_for(request_, amount):
                      for num in nums_to_bill]
 
     # me = user_from_cookies(request.cookies)
-    if len(users_to_bill) == 0:
-        flash('Cannot find any faces')
-        return 0
-
     amt_per_person = float(amount)/len(users_to_bill)
 
     LOG.debug("me: ", current_user)
@@ -69,12 +65,12 @@ def apply_bill_for(request_, amount):
 
     # ADD IN CHECK SO YOU DON'T BILL ME
     for user in users_to_bill:
-        bill = Bill(from_=current_user.id, to=user, amount=float(amt_per_person))
+        bill = Bill(to=current_user.id, from_=user, amount=amt_per_person)
         bill.save()
         twilio.send_auth_text(bill)
 
-    flash('%s got billed' %s ' '.join(users_to_bill))
-    return len(users_to_bill)
+    # RETURN SOME SUCCESS INDICATOR
+    return ""
 
 @app.route("/mobile", methods=["GET"])
 def render_simple_upload():
@@ -88,9 +84,7 @@ def apply_uploaded_file():
     amount = request.form.get("amount")
     LOG.debug("amount: ", amount)
 
-    apply_bill_for(request, amount)
-
-    return redirect(url_for('profile'))
+    return apply_bill_for(request, amount)
 
 @app.route("/", methods=["GET"])
 def render_login():
@@ -132,7 +126,10 @@ def register_user():
         person.save()
         login_user(person)
 
-    flash('thanks for registering!')
+    resp = make_response(render_template("my_profile.html",
+                                        success_message="Welcome!"))
+
+
     # RETURN "SUCESSFULLY REGISTERED" TEMPLATE
     return redirect(url_for('profile'))
 
@@ -152,15 +149,12 @@ def logout():
 def profile():
     if request.method == "POST":
         #me = user_from_cookies(request.cookies)
-        add_training_imgs(request, current_user)
+        add_training_imgs(current_user, request)
+        
 
-        flash('images added.')
+        # FLASH HERE OR WHATEVER
 
-    if current_user.is_authenticated():
-        n = current_user.name
-    else:
-        n = 'Stranger'
-    return render_template("my_profile.html", username=n)
+    return render_template("my_profile.html", username=current_user.name)
 
 
 if __name__ == "__main__":
