@@ -129,7 +129,7 @@ class TwilioClient(object):
                 person_from.name,
                 amount),
             to=person_to.number
-            from_)
+            # from_)
             # from_=person_from.number)
 
         LOG.debug("message.sid: ", message.sid)
