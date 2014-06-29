@@ -58,6 +58,9 @@ def apply_bill_for(request_, amount):
                      for num in nums_to_bill]
 
     # me = user_from_cookies(request.cookies)
+    if len(users_to_bill):
+        return ""
+
     amt_per_person = float(amount)/len(users_to_bill)
 
     LOG.debug("me: ", current_user)
