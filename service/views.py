@@ -60,6 +60,16 @@ def apply_bill_for(request_, amount):
     # RETURN SOME SUCCESS INDICATOR
     return ""
 
+@app.route("/mobile", methods=["GET"])
+def render_simple_upload():
+    return render_template("simple_upload.html")
+
+@app.route("mobile_upload", methods=["POST"])
+def apply_uploaded_file():
+    amount = request.data.get("amount")
+    LOG.debug("amount: ", amount)
+    LOG.debug("forwarding request: ", request)
+    return apply_bill_for(request, amount)
 
 @app.route("/", methods=["GET"])
 def render_login():
