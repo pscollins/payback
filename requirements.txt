@@ -2,10 +2,12 @@ Flask==0.10.1
 Flask-WTF==0.9.5
 Jinja2==2.7.3
 MarkupSafe==0.23
+Pillow==2.4.0
 WTForms==1.0.5
 Werkzeug==0.9.6
 argparse==1.2.1
 astroid==1.1.1
+face-client==1.2.dev
 flask-mongoengine==0.7.0
 httplib2==0.9
 itsdangerous==0.24

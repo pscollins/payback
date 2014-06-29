@@ -14,4 +14,4 @@ app.config.from_pyfile('./remote-dev.cfg')
 # def init_db():
 db = MongoEngine(app)
 
-# import views
+import views
