@@ -39,7 +39,7 @@ def add_training_imgs(request_, user):
 
     return "SUCCESS"
 
-@app.route("/upload_test", method=["GET"])
+@app.route("/upload_test", methods=["GET"])
 def test_upload():
     return render_template("temp.html")
 
@@ -150,7 +150,7 @@ def profile():
 
 
 
-        # FLASH HERE OR WHATEVER==x
+        # FLASH HERE OR WHATEVER==
         flash('images added.')
 
 
