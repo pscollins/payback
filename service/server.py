@@ -1,16 +1,17 @@
 import logging
+import requests
 
 from flask import Flask, request, render_template
 
 from manager import Manager
 from utils import easylogger
-from service import app, db
-from engine.engine import Twilio, Venmo
+from service import app#, db
+from engine.engine import TwilioClient, VenmoClient, TwilReq
 
 manager = Manager()
 LOG = easylogger.LOG
-twilio = Twilio()
-venmo = Venmo()
+twilio = TwilioClient()
+venmo = VenmoClient()
 # class InvalidFileError(Exception):
 #     status_code = 400
 
@@ -33,14 +34,19 @@ def proc_file():
 
 @app.route("/", methods=["GET"])
 def render_login():
-    return "Authorize with Paypal: {}".format(twilio.get_login_url())
+    return render_template("index.html",
+                           register_url=venmo.get_auth_url())
 
 @app.route("/text_recv", methods=["GET"])
 def receive_text():
     params = request.args
     twilreq = TwilReq(params.get("From"), params.get("Body"))
 
-    return twilio.process_twilreq(twilreq)
+    bills, person_billed = twilio.process_twilreq(twilreq)
+
+    venmo.make_payments(person_billed, [b.to for b in bills])
+
+    return twilio.payment_conf(person_billed, bills)
 
 @app.route("/code_recv", methods=["GET"])
 def register_user():
@@ -51,6 +57,7 @@ def register_user():
     person = venmo.person_from_auth_code(auth_code)
 
     # COMMIT PERSON TO DB
+    person.save()
 
     # RETURN SOME "SUCESSFULLY REGISTERED" MESSAGE
     return ""

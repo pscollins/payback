@@ -6,22 +6,27 @@ import requests
 from engine_cfg import TW_CLIENT_ID, TW_SECRET_KEY, \
     VM_SECRET_KEY, VM_CLIENT_ID
 from utils import easylogger
+from service.models import Person, Bill
 
 LOG = easylogger.LOG
 
+class ImpossibleError(Exception):
+    pass
+
 # TEMP
-Person = collections.namedtuple("Person", ["number",
-                                           "name",
-                                           "email",
-                                           "access_token"
-                                           ])
-TwilReq = collections.namedtuple("TwilReq", ["from", "body"])
+# Person = collections.namedtuple("Person", ["number",
+#                                            "name",
+#                                            "email",
+#                                            "access_token"
+#                                            ])
+TwilReq = collections.namedtuple("TwilReq", ["from_", "body"])
 
 class VenmoClient(object):
     BASE_URL = "https://api.venmo.com/v1"
     DEFAULT_NOTE = "Payment from {} via Pay Back."
 
-    def __init__(self, client_id, secret_key):
+    def __init__(self, client_id=VM_CLIENT_ID,
+                 secret_key=VM_SECRET_KEY):
         self.client_id = client_id
         self.secret_key = secret_key
 
@@ -67,7 +72,7 @@ class VenmoClient(object):
     # Person * Person... -> void
     def make_payments(self, amount, to, *froms):
         for from_ in froms:
-            self._make_payment(amout, to, from_)
+            self._make_payment(amount, to, from_)
 
     # Person * Person -> void
     def _make_payment(self, amount, to, from_):
@@ -87,9 +92,7 @@ class VenmoClient(object):
                   ", req.code: ", req.status_code)
 
 
-
-
-class Twilio(object):
+class TwilioClient(object):
     MSG_FMT = '''Hey {}!
     You owe {} ${:.2f}! Reply OK to authorize payment.
     '''
@@ -97,7 +100,7 @@ class Twilio(object):
     RESP_FMT = '''
     <?xml version="1.0" encoding="UTF-8"?>
     <Response>
-    <Message>Payment confirmed.</Message>
+    <Message>Payment confirmed. Paid: {}.</Message>
     </Response>
     '''
 
@@ -123,7 +126,20 @@ class Twilio(object):
         # FIND PERSON IN THE DB AND CHECK IF THEY HAVE OUTSTANDING
         # PAYMENT
 
-        # IF THEY DO, PROCESS IT
+        # for Person.objects(number=twilreq.number):
 
-        # FINALLY
-        return self.RESP_FMT
+        if twilreq.body is "OK":
+            to_bill_person = Person.objects(number=twilreq.number)
+            if len(to_bill_person) > 1 or len(to_bill_person) == 0:
+                raise ImpossibleError
+
+            return to_bill_person, Bill.object(from_=to_bill_person[0])
+
+        else:
+            return []
+
+    def payment_conf(self, person_billed, bills_paid):
+        paid_msgs = ["To {}: ${:.2f}".format(b.to.name, b.amount)
+                    for b in bills_paid].join(",")
+
+        return self.RESP_FMT.format(paid_msgs)

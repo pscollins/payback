@@ -57,3 +57,9 @@ db/
 
 # emacs
 *~
+
+# Pictures
+models/*/*/*.jpg
+models/*/*.jpg
+engine/Pictures/*/*.jpg
+engine/Pictures/*.png

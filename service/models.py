@@ -1,10 +1,19 @@
 #!/usr/bin/env python
 from service import app, db
 
-class User(db.Document):
-    # paypal_secret = db.StringField()
+# BE AWARE THAT TWILIO AND VENMO FORMAT PHONE NUMBERS DIFFERENTLY AND
+# THAT THIS MAY FUCK UP
 
-    name = db.StringField()
+class Person(db.Document):
+    name = db.StringField(required=True)
+    number = db.StringField(required=True, unique=True)
+    access_token = db.StringField(required=True)
+    email = db.EmailField(required=True)
+
     portraits = db.ListField(db.ImageField())
+    bills_owed = db.ListField(db.ReferenceField('Bill'))
 
-    refresh_token = db.StringField()
+class Bill(db.Document):
+    amount = db.FloatField(required=True)
+    to = db.ReferenceField(Person, required=True)
+    from_ = db.ReferenceField(Person, required=True)
