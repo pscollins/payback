@@ -67,6 +67,8 @@ def render_simple_upload():
 @app.route("/mobile_upload", methods=["POST"])
 def apply_uploaded_file():
     LOG.debug("forwarding request: ", request)
+    LOG.debug("request.data: ", request.data)
+    LOG.debug("request.__dict__", request.__dict__)
     amount = request.data.get("amount")
     LOG.debug("amount: ", amount)
 
