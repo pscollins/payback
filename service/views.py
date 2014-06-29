@@ -34,7 +34,7 @@ def add_training_imgs(request_, user):
     for name in files_dict:
         LOG.debug("file name: ", name)
 
-    sky.train_for_user(user, request.files)
+    sky.train_for_user(user, request.files.get("set"))
     # if manager.process(files_dict):
 
     return "SUCCESS"

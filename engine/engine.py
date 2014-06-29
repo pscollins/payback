@@ -191,6 +191,7 @@ class SkyClient(object):
     # match on person.number b/c unique
     def train_for_user(self, person, *images):
         LOG.debug("Sending to faces_detect")
+        LOG.debug("Got images: ", images)
 
         resps = [self.client.faces_detect(file=im) for im in images]
 
