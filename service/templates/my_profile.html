@@ -36,6 +36,16 @@
 
 			<h1>Hi {{ username }}!</h1>
 
+			{% with messages = get_flashed_messages() %}
+			{% if messages %}
+			<ul class=flashes>
+			  {% for message in messages %}
+			  <li>{{ message }}</li>
+			  {% endfor %}
+			</ul>
+			{% endif %}
+			{% endwith %}
+
 			<ul>
 			  <li>
 			    <a href="">link your Facebook to upload profile images</a>

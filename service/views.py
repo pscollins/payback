@@ -1,7 +1,7 @@
 import logging
 # import requests
 
-from flask import Flask, request, render_template, make_response, redirect, url_for
+from flask import Flask, request, render_template, make_response, redirect, url_for, flash
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from manager import Manager
 from utils import easylogger
@@ -123,10 +123,7 @@ def register_user():
         person.save()
         login_user(person)
 
-    resp = make_response(render_template("my_profile.html",
-                                        success_message="Welcome!"))
-
-
+    flash('thanks for registering!')
     # RETURN "SUCESSFULLY REGISTERED" TEMPLATE
     return redirect(url_for('profile'))
 
@@ -147,8 +144,7 @@ def profile():
     if request.method == "POST":
         #me = user_from_cookies(request.cookies)
         add_training_imgs(current_user, request)
-        
-
+        flash('images added.')
 
     return render_template("my_profile.html", username=current_user.name)
 
