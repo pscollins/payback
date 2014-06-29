@@ -145,8 +145,12 @@ def profile():
         #me = user_from_cookies(request.cookies)
         add_training_imgs(current_user, request)
         flash('images added.')
-
-    return render_template("my_profile.html", username=current_user.name)
+    
+    if current_user.is_authenticated():
+        n = current_user.name
+    else:
+        n = 'Stranger'
+    return render_template("my_profile.html", username=n)
 
 
 if __name__ == "__main__":
