@@ -108,10 +108,11 @@ class TwilioClient(object):
     </Response>
     '''
 
-
     RESP_FMT = BASE_FMT.format("Payment confirmed. Paid: {}")
 
     REJ_FMT = BASE_FMT.format("Payment rejected. Paid: $0.00")
+
+    OUR_NUM = "+16466473401"
 
     def __init__(self,
                  tw_client_id=TW_CLIENT_ID,
@@ -128,7 +129,9 @@ class TwilioClient(object):
                 person_to.name,
                 person_from.name,
                 amount),
-            to=person_to.number)
+            to=person_to.number,
+            from_=self.OUR_NUMBER)
+
             # from_)
             # from_=person_from.number)
 
