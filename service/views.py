@@ -43,23 +43,25 @@ def add_training_imgs(request_, user):
 def apply_bill_for(request_, amount):
     files_dict = request_.files
 
-    LOG.debug("about to apply bill on ", files_dict.__dict)
+    LOG.debug("about to apply bill on ", files_dict)
     LOG.debug("for amount: ", amount)
 
     # assert len(files_dict) == 1
 
-    nums_to_bill = sky.find_user_numbers_in(files_dict.get("SOMEKEY???"))
+    nums_to_bill = sky.find_user_numbers_in(files_dict.get("to_ident"))
 
     # CAN WE DO THIS MORE ELEGANTLY????????
     users_to_bill = [Person.objects(number=num)[0]
                      for num in nums_to_bill]
 
-    me = user_from_cookies(request.cookies)
-    amt_per_person = amount/len(users_to_bill)
+    # me = user_from_cookies(request.cookies)
+    amt_per_person = float(amount)/len(users_to_bill)
+
+    LOG.debug("me: ", current_user)
 
     # ADD IN CHECK SO YOU DON'T BILL ME
     for user in users_to_bill:
-        bill = Bill(to=me, from_=user, amount=amt_per_person)
+        bill = Bill(to=current_user, from_=user, amount=amt_per_person)
         bill.save()
         twilio.send_auth_text(bill)
 
@@ -75,7 +77,7 @@ def apply_uploaded_file():
     LOG.debug("forwarding request: ", request)
     LOG.debug("request.data: ", request.data)
     LOG.debug("request.__dict__", request.__dict__)
-    amount = request.data.get("amount")
+    amount = request.form.get("amount")
     LOG.debug("amount: ", amount)
 
     return apply_bill_for(request, amount)
