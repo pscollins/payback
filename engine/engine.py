@@ -141,13 +141,13 @@ class TwilioClient(object):
 
         # FIX ME LATER TO DO SMART THINGS
         if twilreq.body == "OK":
-            to_bill_person = Person.objects(number=twilreq.from_)[0]
+            to_bill_person = Person.objects(number=twilreq.from_)
             LOG.debug("to_bill_person: ",
                       to_bill_person)
             # if len(to_bill_person) > 1 or len(to_bill_person) == 0:
             #     raise ImpossibleError
 
-            return to_bill_person, Bill.object(from_=to_bill_person[0])
+            return to_bill_person, Bill.objects(from_=to_bill_person[0])
 
         else:
             return None, []
