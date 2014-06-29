@@ -26,8 +26,8 @@ def load_user(phone_number):
     return Person.objects(number=phone_number).first()
 
 
-# @easylogger.log_at(logging.DEBUG)
-# @app.route("/proc_file", methods=["GET", "POST"])
+@easylogger.log_at(logging.DEBUG)
+@app.route("/proc_file", methods=["GET", "POST"])
 def add_training_imgs(request_, user):
     files_dict = request_.files
     LOG.error("request: ", request.__dict__)
