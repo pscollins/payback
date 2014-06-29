@@ -1,12 +1,14 @@
 Flask==0.10.1
+Flask-Login==0.2.11
 Flask-WTF==0.9.5
 Jinja2==2.7.3
 MarkupSafe==0.23
-Pillow==2.4.0
+PIL==1.1.7
 WTForms==1.0.5
 Werkzeug==0.9.6
 argparse==1.2.1
 astroid==1.1.1
+distribute==0.6.24
 face-client==1.2.dev
 flask-mongoengine==0.7.0
 httplib2==0.9
