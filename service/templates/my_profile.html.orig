@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Pay Back</title>
+	<meta charset="utf-8">
+	<meta name="author" content="pixelhint.com">
+	<meta name="description" content="Pay Back"/>
+	<link rel="stylesheet" type="text/css" href="css/reset.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<link rel="stylesheet" type="text/css" href="css/file-up.css">
+	<link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+	</head>
+	<body class="subpage">
+
+</head>
+<body>
+
+	<header>
+	  <div id="main">
+		</div>
+
+		
+	
+		<div class="wrapper">
+		  <a href="#" class="logo"> <img src="img/logo.png" alt="" title="Minima"/> </a>
+			<nav>
+				<ul>
+					<li><a href="">How it Works</a></li>
+					<li><a href="">Our Team</a></li>
+					<li><a href="">Dashboard</a></li>
+					<li><a href="">Friends</a></li>
+					<li><a href="">Contact Us</a></li>
+				</ul>
+			</nav>
+
+			<h1>Hi {{ username }}!</h1>
+
+<<<<<<< HEAD
+<<<<<<< HEAD
+			<a href="">link your Facebook to upload profile images</a>
+			OR
+			<a href="{{url_for('add_training_imgs')}}">upload your photos</a>
+			
+			<a href="{{url_for('render_simple_upload')}}">create a bill</a>
+			<a href="{{url_for('logout')}}">logout</a>
+
+=======
+=======
+			{% with messages = get_flashed_messages() %}
+			{% if messages %}
+			<ul class=flashes>
+			  {% for message in messages %}
+			  <li>{{ message }}</li>
+			  {% endfor %}
+			</ul>
+			{% endif %}
+			{% endwith %}
+
+>>>>>>> 216d80fd548e7aefdbeb5b6432e5160bb285d9db
+			<ul>
+			  <li>
+			    <a href="">link your Facebook to upload profile images</a>
+			  </li>
+			  
+			  <li><a href="{{url_for('render_simple_upload')}}">create a bill</a></li>
+
+			  <li>
+			    <form method="POST" action="" enctype="multipart/form-data">
+			      <input type="file" name="set" multiple>
+			      <input type="submit" value="upload">
+			    </form>
+			  </li>
+
+			  <li><a href="{{url_for('logout')}}">logout</a></li>
+			</ul>
+>>>>>>> d6b065a8241873723f01502a4cbc3c6ba9c05083
+		</div>
+		
+		<script type="text/javascript" src="js/jquery.js"></script>
+		<script type="text/javascript" src="js/main.js"></script>
+		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+
+
+	<footer>
+		<div class="wrapper">
+		  {{ success_message }}
+			<div class="f_cols">
+				<h3>Location</h3>
+				<p>1401 South Grand Avenue Los Angeles, CA 90015 <span class="phone">(213) 748-2411</span></p>
+				<a href="#" class="map">see it in the map <span class="arrow">&nbsp;&rarr;</span></a>
+			</div>
+
+			<div class="f_cols">
+				<h3>Company</h3>
+				<ul>
+					<li><a href="#">Our Story</a></li>
+					<li><a href="#">Mission</a></li>
+					<li><a href="#">Journal</a></li>
+					<li><a href="#">Careers</a></li>
+				</ul>
+			</div>
+
+			<div class="f_cols">
+				<h3>Support</h3>
+				<ul>
+					<li><a href="#">FAQ</a></li>
+					<li><a href="#">Contact Us</a></li>
+					<li><a href="#">Policies</a></li>
+				</ul>
+			</div>
+
+			<div class="f_cols">
+				<h3>Minima.</h3>
+				<p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+				<p>Template made by <a href="http://pixelhint.com" target="_blank">pixelhint.com</a></p>
+			</div>
+
+
+		</div>
+	</footer><!-- End footer -->
+
+	<div id="lightbox"></div>
+	<div id="box">
+		<a href="" class="close"></a>
+		<form method="" action="">
+			<input type="text" id="email" placeholder="Email"/>
+			<input type="text" id="name" placeholder="Name"/>
+			<input type="submit" id="submit" value="Subscribe Now"/>
+		</form>
+	</div>
+</body>

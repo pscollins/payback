@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
+    
+    <title>{% block title %}PayBack{% endblock %}</title>
+    
+    <link rel="stylesheet" href="/css/normalize.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/base.css">
+    <script src="/js/vendor/modernizr-2.7.1.min.js"></script>
+    {% block header %}
+    {% endblock %}
+  </head>
+  <body>
+    <div id="wrap">
+    <!--[if lt IE 8]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+      {% include 'bits/header.html' %}
+      <div class="container">
+	{% include 'bits/notifications.html' %}
+        {% block content %}
+        {% endblock %}
+      </div>
+    </div>
+    {% include 'bits/footer.html' %}
+    <script src="/js/vendor/jquery-1.11.0.min.js"></script>
+    <script src="/js/vendor/bootstrap.min.js"></script>
+    {% block scripts %}
+    {% endblock %}
+    </body>
+</html>

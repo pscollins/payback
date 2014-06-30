@@ -108,28 +108,40 @@ class TwilioClient(object):
     </Response>
     '''
 
-
     RESP_FMT = BASE_FMT.format("Payment confirmed. Paid: {}")
 
     REJ_FMT = BASE_FMT.format("Payment rejected. Paid: $0.00")
+
+    OUR_NUM = "+16466473401"
+    # OUR_NUM = "+13124362253"
 
     def __init__(self,
                  tw_client_id=TW_CLIENT_ID,
                  tw_secret_key=TW_SECRET_KEY):
         self.twilio = TwilioRestClient(tw_client_id, tw_secret_key)
 
+    def _plusify(self, num):
+        return ("+{}" if not "+" in num else "{}").format(num)
 
     def send_auth_text(self, bill):
         amount = bill.amount
         person_to = bill.to
         person_from = bill.from_
-        message = self.twilio.sms.messages.create(
+        to_num = self._plusify(person_to.number)
+
+        LOG.debug("person_to.number ", to_num)
+        LOG.debug("self.OUR_NUM ", self.OUR_NUM)
+
+        message = self.twilio.messages.create(
             body=self.MSG_FMT.format(
                 person_to.name,
                 person_from.name,
                 amount),
-            to=person_to.number,
-            from_=person_from.number)
+            to=self._plusify(to_num),
+            from_=self.OUR_NUM)
+
+            # from_)
+            # from_=person_from.number)
 
         LOG.debug("message.sid: ", message.sid)
         return
@@ -140,7 +152,7 @@ class TwilioClient(object):
         LOG.debug("twilreq: ", twilreq)
 
         # FIX ME LATER TO DO SMART THINGS
-        if twilreq.body == "OK":
+        if twilreq.body.lower() == "ok":
             to_bill_person = Person.objects(number=twilreq.from_)
             LOG.debug("to_bill_person: ",
                       to_bill_person)
@@ -163,7 +175,7 @@ class TwilioClient(object):
 
 class SkyClient(object):
     NAMESPACE = "PayBackTest"
-    MIN_CONF = 40
+    MIN_CONF = 5
 
     def __init__(self, client_id=SB_CLIENT_ID,
                  secret_key=SB_SECRET_KEY):
@@ -179,6 +191,7 @@ class SkyClient(object):
     # match on person.number b/c unique
     def train_for_user(self, person, *images):
         LOG.debug("Sending to faces_detect")
+        LOG.debug("Got images: ", images)
 
         resps = [self.client.faces_detect(file=im) for im in images]
 

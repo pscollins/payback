@@ -24,7 +24,7 @@ class Person(db.Document, UserMixin):
         return self.active
 
     def get_id(self):
-        return unicode(self.id)
+        return unicode(self.number)
 
 
 class Bill(db.Document):

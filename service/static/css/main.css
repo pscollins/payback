@@ -178,7 +178,7 @@ header nav ul li a:hover{
 
 .billboard .caption a{
 	padding: 15px 80px;
-	background: #FFFFFF;
+	background: #000000;
 	color: #ffffff;
 	font-family: 'open_semibold', arial;
 	font-weight: bold;
@@ -194,7 +194,7 @@ header nav ul li a:hover{
 
 .billboard .caption a:hover{
 	background: #ffffff;
-	color: #ffffff;
+	color: #000000;
 }
 
 
