@@ -31,6 +31,9 @@ def add_training_imgs(request_, user):
     files_dict = request_.files
     LOG.error("request: ", request.__dict__)
     LOG.error("len(files_dict)", len(files_dict))
+    LOG.error("all files are: ", files_dict)
+    LOG.debug("files are: ", files_dict.get("set").__dict__)
+
     for name in files_dict:
         LOG.debug("file name: ", name)
 
@@ -39,9 +42,6 @@ def add_training_imgs(request_, user):
 
     return "SUCCESS"
 
-@app.route("/upload_test", methods=["GET"])
-def test_upload():
-    return render_template("temp.html")
 
 def apply_bill_for(request_, amount):
     files_dict = request_.files
