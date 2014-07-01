@@ -43,11 +43,11 @@ def add_training_imgs(request_, user):
     return "SUCCESS"
 
 
-def apply_bill_for(request_, amount):
+def apply_bill_for(request_, amount_str):
     files_dict = request_.files
 
     LOG.debug("about to apply bill on ", files_dict)
-    LOG.debug("for amount: ", amount)
+    LOG.debug("for amount: ", amount_str)
 
     # assert len(files_dict) == 1
 
@@ -57,12 +57,17 @@ def apply_bill_for(request_, amount):
     users_to_bill = [Person.objects(number=num)[0]
                      for num in nums_to_bill]
 
+    try:
+        amount = float(amount_str)
+    except ValueError:
+        amount = 0.0
+
     # me = user_from_cookies(request.cookies)
     if len(users_to_bill) == 0:
         flash('Cannot find any faces')
         return 0
 
-    amt_per_person = float(amount)/len(users_to_bill)
+    amt_per_person = amount/len(users_to_bill)
 
     LOG.debug("me: ", current_user)
     LOG.debug("me.__dict__", current_user.__dict__)
@@ -111,9 +116,14 @@ def receive_text():
 
     if person_billed is not None:
         venmo.make_payments(person_billed, [b.to for b in bills])
-        return twilio.payment_conf(person_billed, bills)
+        resp = twilio.payment_conf(person_billed, bills)
     else:
-        return twilio.payment_rej()
+        resp = twilio.payment_rej()
+
+    for bill in bills:
+        bill.delete()
+
+    return resp
 
 @app.route("/code_recv", methods=["GET"])
 def register_user():

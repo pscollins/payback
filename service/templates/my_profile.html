@@ -6,8 +6,8 @@
 	<meta name="author" content="pixelhint.com">
 	<meta name="description" content="Pay Back"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
-
+	<link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="/css/file-up.css">
 </head>
 <body>
   <div class="wrapper">
@@ -25,27 +25,30 @@
     {% endwith %}
     <ul class="list-group">
       <li class="list-group-item"><a href="{{url_for('render_simple_upload')}}">create a bill</a></li>
-      
-      <li class="list-group-item">
-	<a href="">link your Facebook to upload profile images</a>
-      </li>
+
+    <!--   <li class="list-group-item"> -->
+	<!-- <a href="">link your Facebook to upload profile images</a> -->
+    <!--   </li> -->
 
       <li class="list-group-item">
-	upload your images
+	Upload training images.
 	<form method="POST" action="" enctype="multipart/form-data">
 	  <div class="input-group">
-	    <input class="form-control" type="file" name="set" multiple>
+		<span class="btn btn-default btn-file">
+	      <input type="file" name="set" multiple>
+		  Select files
+		</span>
 	    <button type="submit" class="btn btn-warning">Upload</button>
 	  </div>
 	</form>
       </li>
-      
+
       <li class="list-group-item"><a href="{{url_for('logout')}}">logout</a></li>
     </ul>
   </div>
   </div>
-  <script type="text/javascript" src="/js/jquery.js"></script>
-  <script src="js/vendor/bootstrap.min.js"></script>
-    
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
 </body>
 </html>
