@@ -8,7 +8,6 @@ WTForms==1.0.5
 Werkzeug==0.9.6
 argparse==1.2.1
 astroid==1.1.1
-face-client==1.2.dev
 flask-mongoengine==0.7.0
 httplib2==0.9
 ipython==2.1.0
