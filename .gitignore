@@ -63,3 +63,6 @@ models/*/*/*.jpg
 models/*/*.jpg
 engine/Pictures/*/*.jpg
 engine/Pictures/*.png
+
+# Config
+engine/engine_cfg.py
