@@ -35,10 +35,10 @@
 	<form method="POST" action="" enctype="multipart/form-data">
 	  <div class="input-group">
 		<span class="btn btn-default btn-file">
-	      <input type="file" name="set" multiple>
+	      <input id="file-selector" type="file" name="set" multiple>
 		  Select files
 		</span>
-	    <button type="submit" class="btn btn-warning">Upload</button>
+	    <button id="upload-button" type="submit" class="btn btn-warning" disabled>Upload</button>
 	  </div>
 	</form>
       </li>
@@ -49,6 +49,20 @@
   </div>
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+  <script>
+	$(document).ready(function () {
+		$("#file-selector").change(function() {
+			if($(this).val()) {
+				$("#upload-button").attr("disabled", false);
+				$("#upload-button").removeClass("btn-warning").addClass("btn-success");
+			}
+		});
+	});
+  </script>
+
+
+
 
 </body>
 </html>
