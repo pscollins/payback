@@ -154,9 +154,15 @@ def create_new(person):
 
 @app.route("/register_new", methods=["GET"])
 @login_required
-def link_with_facebook():
+def register_new():
 
     pass
+
+@app.route("/process_facebook", methods=["POST"])
+@login_required
+def process_facebook_signup():
+    add_training_imgs(request, current_user)
+
 
 
 @app.route("/code_recv", methods=["GET"])

@@ -1,0 +1,26 @@
+{% macro render_flashed() -%}
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul class=flashes>
+      {% for message in messages %}
+      <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+{%- endmacro %}
+
+{% macro disable_uploader(do_button_style) -%}
+  <script>
+	$(document).ready(function () {
+		$("#file-selector").change(function() {
+			if($(this).val()) {
+				$("#upload-button").attr("disabled", false);
+
+				$("#upload-button").
+                  removeClass("btn-warning").addClass("btn-success");
+			}
+		});
+	});
+  </script>
+{%- endmacro %}
