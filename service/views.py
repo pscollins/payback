@@ -82,10 +82,12 @@ def apply_bill_for(request_, amount_str):
     return len(users_to_bill)
 
 @app.route("/mobile", methods=["GET"])
+@login_required
 def render_simple_upload():
     return render_template("simple_upload.html")
 
 @app.route("/mobile_upload", methods=["POST"])
+@login_required
 def apply_uploaded_file():
     LOG.debug("forwarding request: ", request)
     LOG.debug("request.data: ", request.data)
@@ -125,26 +127,55 @@ def receive_text():
 
     return resp
 
-@app.route("/code_recv", methods=["GET"])
-def register_user():
-    # venmo OAuth
 
+def login_existing(person):
+    '''
+    Given a user that we recognize, redirect her to her profile.
+    '''
+
+    flash("Welcome back!")
+    login_user(person)
+
+    return redirect(url_for('profile'))
+
+
+def create_new(person):
+    '''
+    Commit a new user to the database and prompt for Facebook credentials.
+    '''
+
+    person.save()
+    login_user(person)
+
+    flash('Thanks for registering!')
+
+    return redirect(url_for('register_new'))
+
+
+@app.route("/register_new", methods=["GET"])
+@login_required
+def link_with_facebook():
+
+    pass
+
+
+@app.route("/code_recv", methods=["GET"])
+def process_venmo_code():
+    '''
+    Use the code given to us by the Venmo authentication to see if
+    we're dealing with a new user or an existing one
+    '''
     auth_code = request.args.get("code")
 
     LOG.debug("auth_code: ", auth_code)
 
-    person = venmo.person_from_auth_code(auth_code)
-    x = Person.objects(number=person.number).first()
-    if x:
-        login_user(x)
+    new_person = venmo.person_from_auth_code(auth_code)
+    old_person = Person.objects(number=new_person.number).first()
+    if old_person:
+        return login_existing(old_person)
     else:
-        # COMMIT PERSON TO DB
-        person.save()
-        login_user(person)
+        return create_new(new_person)
 
-    flash('thanks for registering!')
-    # RETURN "SUCESSFULLY REGISTERED" TEMPLATE
-    return redirect(url_for('profile'))
 
 @app.route('/logout')
 def logout():
@@ -158,7 +189,7 @@ def logout():
 
 
 @app.route("/profile", methods=["GET", "POST"])
-#@login_required
+@login_required
 def profile():
     if request.method == "POST":
         #me = user_from_cookies(request.cookies)

@@ -1,28 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<title>PayBack</title>
-	<meta charset="utf-8">
-	<meta name="author" content="pixelhint.com">
-	<meta name="description" content="Pay Back"/>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="/css/file-up.css">
-</head>
-<body>
+{% extends "base.html" %}
+{% from "macro.html" import render_flashed %}
+
+{% block head %}
+<link rel="stylesheet" type="text/css" href="/css/file-up.css">
+{% endblock %}
+
+{% block content %}
   <div class="wrapper">
     <div class="col-lg-10">
     <a href="#" class="logo"> <img src="img/logo.png" alt="" title="Minima"/> </a>
     <h1>Hi {{ username }}!</h1>
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    <ul class=flashes>
-      {% for message in messages %}
-      <li>{{ message }}</li>
-      {% endfor %}
-    </ul>
-    {% endif %}
-    {% endwith %}
+
+    {{ render_flashed() }}
+
     <ul class="list-group">
       <li class="list-group-item"><a href="{{url_for('render_simple_upload')}}">create a bill</a></li>
 
@@ -47,9 +37,10 @@
     </ul>
   </div>
   </div>
-  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+{% endblock %}
 
+
+{% block script %}
   <script>
 	$(document).ready(function () {
 		$("#file-selector").change(function() {
@@ -60,9 +51,4 @@
 		});
 	});
   </script>
-
-
-
-
-</body>
-</html>
+{% endblock %}
