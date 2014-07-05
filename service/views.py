@@ -19,6 +19,7 @@ sky = SkyClient()
 # class InvalidFileError(Exception):
 #     status_code = 400
 
+DEBUG = True
 
 # set up login manager
 @login_manager.user_loader
@@ -177,7 +178,7 @@ def process_venmo_code():
 
     new_person = venmo.person_from_auth_code(auth_code)
     old_person = Person.objects(number=new_person.number).first()
-    if old_person:
+    if old_person or DEBUG:
         return login_existing(old_person)
     else:
         return create_new(new_person)
