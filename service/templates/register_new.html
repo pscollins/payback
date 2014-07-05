@@ -11,16 +11,16 @@ so that we'll recongnize you later.</p>
 
 <p> First, select a clear image of your face to upload here. </p>
 
-<form id="submit" method="POST", action="process_facebook">
+<form id="submit" method="POST" action="process_facebook">
   <span id="file-selector" class="btn btn-default btn-file">
     Browse <input type="file">
   </span>
 </form>
 
 
-<p> Next, authorize us to log in
+<p> Next, authorize us to log in </p>
 <div id="upload-button" class="fb-login-button" data-max-rows="1" data-size="xlarge"
-     data-show-faces="true" data-auto-logout-link="false" disabled>
+     data-show-faces="true" data-auto-logout-link="false">
 </div>
 {% endblock %}
 
@@ -28,22 +28,11 @@ so that we'll recongnize you later.</p>
 <div id="fb-root"></div>
 <script>
 window.fbAsyncInit = function() {
+  /* Getting an error here, not clear why */
   FB.init({
       appId      : '568181326626588',
       xfbml      : true,
       version    : 'v2.0'
-    });
-
-
-  FB.getLoginStatus (function(response) {
-      console.log("Got a response from Facebook.");
-      console.log("Response: ", response);
-
-      if(response.status == 'connected') {
-        $("#submit").submit();
-      } else {
-        console.log("Something went wrong!");
-      }
     });
 }
 
@@ -56,6 +45,18 @@ window.fbAsyncInit = function() {
     js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=568181326626588&version=v2.0";
     fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
+
+FB.getLoginStatus (function(response) {
+    console.log("Got a response from Facebook.");
+    console.log("Response: ", response);
+
+    if(response.status == 'connected') {
+      $("#submit").submit();
+    } else {
+      console.log("Something went wrong!");
+    }
+  });
+
 </script>
 
 {{ disable_uploader(do_button_style=False) }}
