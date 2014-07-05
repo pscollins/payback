@@ -26,32 +26,41 @@ so that we'll recongnize you later.</p>
 
 {% block script %}
 <div id="fb-root"></div>
-{{ facebook_init() }}
 
 <script>
-(function(d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) return;
-    js = d.createElement(s);
-    js.id = id;
-    cookie = true;
-    js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=568181326626588&version=v2.0";
-    fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));
+$(document).ready(function() {
+	window.fbAsyncInit = function() {
+	  FB.init({
+		  appId      : '568181326626588',
+		  xfbml      : true,
+		  version    : 'v2.0'
+		});
+    };
 
-FB.getLoginStatus (function(response) {
-    console.log("Got a response from Facebook.");
-    console.log("Response: ", response);
+    (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s);
+        js.id = id;
+        cookie = true;
+        js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=568181326626588&version=v2.0";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
 
-    if(response.status == 'connected') {
-      $("#submit").submit();
-    } else {
-      console.log("Something went wrong!");
-    }
-  });
+    FB.getLoginStatus (function(response) {
+        console.log("Got a response from Facebook.");
+        console.log("Response: ", response);
+
+        if(response.status == 'connected') {
+          $("#submit").submit();
+        } else {
+          console.log("Something went wrong!");
+        }
+      });
+});
 
 </script>
 
-{{ disable_uploader(do_button_style=False) }}
+<!-- {{ disable_uploader(do_button_style=False) }} -->
 
 {% endblock %}
