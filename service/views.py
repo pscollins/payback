@@ -156,14 +156,15 @@ def create_new(person):
 @app.route("/register_new", methods=["GET"])
 @login_required
 def register_new():
-
-    pass
+    return render_template("register_new.html")
 
 @app.route("/process_facebook", methods=["POST"])
 @login_required
 def process_facebook_signup():
     add_training_imgs(request, current_user)
+    # DO SOME STUFF WITH THEIR FACEBOOK PROFILE
 
+    return redirect(url_for("profile"))
 
 
 @app.route("/code_recv", methods=["GET"])
