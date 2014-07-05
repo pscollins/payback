@@ -33,19 +33,19 @@ window.fbAsyncInit = function() {
       xfbml      : true,
       version    : 'v2.0'
     });
-};
 
-FB.getLoginStatus (function(response) {
-    console.log("Got a response from Facebook.");
-    console.log("Response: ", response);
 
-    if(response.status == 'connected') {
-      $("#submit").submit();
-    } else {
-      console.log("Something went wrong!");
-    }
-});
+  FB.getLoginStatus (function(response) {
+      console.log("Got a response from Facebook.");
+      console.log("Response: ", response);
 
+      if(response.status == 'connected') {
+        $("#submit").submit();
+      } else {
+        console.log("Something went wrong!");
+      }
+    });
+}
 
 (function(d, s, id) {
     var js, fjs = d.getElementsByTagName(s)[0];
