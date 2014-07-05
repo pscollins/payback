@@ -10,7 +10,7 @@
     {% endwith %}
 {%- endmacro %}
 
-{% macro disable_uploader(do_button_style) -%}
+{% macro disable_uploader(do_button_style=True) -%}
   <script>
 	$(document).ready(function () {
 		$("#file-selector").change(function() {
@@ -25,6 +25,22 @@
 	});
   </script>
 {%- endmacro %}
+
+
+{% macro multifile_upload() -%}
+  <form method="POST" action="" enctype="multipart/form-data">
+	<div class="input-group">
+	  <span class="btn btn-default btn-file">
+	    <input id="file-selector" type="file" name="set" multiple>
+		Select files
+	  </span>
+	  <button id="upload-button" type="submit" class="btn btn-warning"
+              disabled>
+        Upload
+      </button>
+	</div>
+  </form>
+{% endmacro %}
 
 {% macro facebook_init() -%}
   <script>

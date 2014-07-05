@@ -159,11 +159,19 @@ def register_new():
     # TODO: make the facebook button disabled unless we have a picture
     return render_template("register_new.html")
 
-@app.route("/process_facebook", methods=["POST"])
+
+@app.route("/facebook_signup", methods=["POST"])
+@login_required
+def facebook_signup():
+    add_training_imgs(request, current_user)
+
+    return render_template("facebook_signup.html")
+
+@app.route("/process_facebook_signup", methods=["GET"]):
 @login_required
 def process_facebook_signup():
-    add_training_imgs(request, current_user)
-    # DO SOME STUFF WITH THEIR FACEBOOK PROFILE
+    # NOW WE LEARN THEIR MOST RECENT PICTURES,
+    # AND MAYBE WE THROW AND ERROR IF THEY DON'T HAVE ENOUGH
 
     return redirect(url_for("profile"))
 

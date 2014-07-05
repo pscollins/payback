@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% from "macro.html" import disable_uploader, multifile_upload %}
 
+{% block content %}
 <p> Next, link your account to Facebook so that we can learn what you look
  like from your pictures. </p>
 
@@ -21,7 +22,7 @@ function loginStateCallback(response) {
     console.log("Response: ", response);
 
     if(response.status == 'connected') {
-      $("#submit").submit();
+      console.log("Something went right!");
     } else {
       console.log("Something went wrong!");
     }
