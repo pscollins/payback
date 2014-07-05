@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% from "macro.html" import render_flashed %}
+{% from "macro.html" import render_flashed, disable_uploader, multifile_upload %}
 
 {% block head %}
 <link rel="stylesheet" type="text/css" href="/css/file-up.css">
 {% endblock %}
 
 {% block content %}
-  <div class="wrapper">
+
     <div class="col-lg-10">
     <a href="#" class="logo"> <img src="img/logo.png" alt="" title="Minima"/> </a>
     <h1>Hi {{ username }}!</h1>
@@ -22,33 +22,14 @@
 
       <li class="list-group-item">
 	Upload training images. No image may be larger than 2 MB.
-	<form method="POST" action="" enctype="multipart/form-data">
-	  <div class="input-group">
-		<span class="btn btn-default btn-file">
-	      <input id="file-selector" type="file" name="set" multiple>
-		  Select files
-		</span>
-	    <button id="upload-button" type="submit" class="btn btn-warning" disabled>Upload</button>
-	  </div>
-	</form>
       </li>
-
+      {{ multifile_upload() }}
       <li class="list-group-item"><a href="{{url_for('logout')}}">logout</a></li>
     </ul>
   </div>
-  </div>
+
 {% endblock %}
 
-
 {% block script %}
-  <script>
-	$(document).ready(function () {
-		$("#file-selector").change(function() {
-			if($(this).val()) {
-				$("#upload-button").attr("disabled", false);
-				$("#upload-button").removeClass("btn-warning").addClass("btn-success");
-			}
-		});
-	});
-  </script>
+{{ disable_uploader() }}
 {% endblock %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% from "macro.html" import disable_uploader, multifile_upload %}
+
+<p> Next, link your account to Facebook so that we can learn what you look
+ like from your pictures. </p>
+
+
+<fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+</fb:login-button>
+<!-- <div id="upload-button" class="fb-login-button" data-max-rows="1" data-size="xlarge"
+data-show-faces="true" data-auto-logout-link="false">
+</div> -->
+{% endblock %}
+
+{% block script %}
+<div id="fb-root"></div>
+
+<script>
+function loginStateCallback(response) {
+    console.log("Got a response from Facebook.");
+    console.log("Response: ", response);
+
+    if(response.status == 'connected') {
+      $("#submit").submit();
+    } else {
+      console.log("Something went wrong!");
+    }
+}
+
+function checkLoginState() {
+  FB.getLoginStatus(function(response) {
+      statusChangeCallback(response);
+    });
+}
+
+window.fbAsyncInit = function() {
+  FB.init({
+	  appId      : '568181326626588',
+	  xfbml      : true,
+	  version    : 'v2.0'
+	});
+
+  FB.getLoginStatus (function(response) {
+      loginStateCallback(response);
+    });
+};
+(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s);
+    js.id = id;
+    cookie = true;
+    js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=568181326626588&version=v2.0";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
+{% endblock %}
