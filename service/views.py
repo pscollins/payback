@@ -179,7 +179,7 @@ def facebook_signup():
 def process_facebook_signup():
     # NOW WE LEARN THEIR MOST RECENT PICTURES,
     # AND MAYBE WE THROW AND ERROR IF THEY DON'T HAVE ENOUGH
-    access_token = request.args()['accessToken']
+    access_token = request.args['accessToken']
 
     fb_user = fb_builder.client_for_person(current_user, access_token)
 
