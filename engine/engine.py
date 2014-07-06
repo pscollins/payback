@@ -244,8 +244,11 @@ class SkyClient(object):
             raise UnrecognizedUserError
 
     def _find_best_uid_from_tag_json(self, tag):
-        uid_and_conf = max(tag['uids'], key=lambda x: x['confidence'])
-        return uid_and_conf['uid'], uid_and_conf['confidence']
+        try:
+            uid_and_conf = max(tag['uids'], key=lambda x: x['confidence'])
+            return uid_and_conf['uid'], uid_and_conf['confidence']
+        except ValueError:
+            return None, None
 
     def _update_tids(self, tids, possible_tags):
         try:
@@ -268,7 +271,7 @@ class SkyClient(object):
             original = self._find_matching_original(original_photos,
                                                     photo['url'])
             possible_tags = []
-            for tag in photo['tags']:
+            for tag in [tag for tag in photo['tags'] if tag['uids']]:
                 LOG.debug("processing tag: ", tag)
                 # Not sure if we ever have more than one uid here
                 uid, confidence = self._find_best_uid_from_tag_json(tag)
@@ -405,7 +408,8 @@ class TaggedPhoto:
         tags = []
         for resp in fb_resp['tags']['data']:
             # This will be None if no person is in our db
-            number = Person.objects(fb_id=resp['id']).first()
+            person = Person.objects(fb_id=resp['id']).first()
+            number = person.number if person else None
             tags.append(PhotoTag(number, float(resp["x"]),
                                  float(resp["y"])))
 
