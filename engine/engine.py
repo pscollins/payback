@@ -201,7 +201,8 @@ class SkyClient(object):
         return ident.split("@")[0]
 
     def _train_person_on_tids(self, person, tids):
-        self.client.tags_save(tids=",".join(tids),
+        # set() because dupes break the API
+        self.client.tags_save(tids=",".join(set(tids)),
                               uid=self._qualify(person.number),
                               label=person.name)
 
@@ -293,6 +294,8 @@ class SkyClient(object):
 
         if tids:
             LOG.debug("About to start training...")
+            # We're getting duplicates in here for reasons that are
+            # unclear to me
             self._train_person_on_tids(person, tids)
         else:
             LOG.debug("Didn't find any pictures to train on.")
