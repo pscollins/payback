@@ -193,7 +193,7 @@ def process_facebook_signup():
 
     LOG.debug("Got photos: ", photos)
     tagged_photos = [TaggedPhoto.from_fb_resp(photo) for photo
-                     in photos['data']]
+                     in photos]
 
     LOG.debug("Got tagged photos: ", tagged_photos)
     LOG.debug("About to submit to SkyBiometry...")
