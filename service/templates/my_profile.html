@@ -23,7 +23,7 @@
       <li class="list-group-item">
 	Upload training images. No image may be larger than 2 MB.
       </li>
-      {{ multifile_upload() }}
+      {{ multifile_upload("proc_file") }}
       <li class="list-group-item"><a href="{{url_for('logout')}}">logout</a></li>
     </ul>
   </div>

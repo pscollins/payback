@@ -27,8 +27,8 @@
 {%- endmacro %}
 
 
-{% macro multifile_upload() -%}
-  <form method="POST" action="" enctype="multipart/form-data">
+{% macro multifile_upload(action) -%}
+  <form method="POST" action={{ action }}  enctype="multipart/form-data">
 	<div class="input-group">
 	  <span class="btn btn-default btn-file">
 	    <input id="file-selector" type="file" name="set" multiple>

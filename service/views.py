@@ -159,7 +159,6 @@ def create_new(person):
 @app.route("/register_new", methods=["GET"])
 @login_required
 def register_new():
-    # TODO: make the facebook button disabled unless we have a picture
     return render_template("register_new.html")
 
 
