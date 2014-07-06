@@ -8,7 +8,8 @@ from flask.ext.login import login_user, logout_user, current_user,\
 from manager import Manager
 from utils import easylogger
 from service import app, login_manager
-from engine.engine import TwilioClient, VenmoClient, TwilReq, SkyClient
+from engine.engine import TwilioClient, VenmoClient, TwilReq, SkyClient, \
+    FacebookUserClientBuilder
 from models import Person, Bill
 
 
@@ -17,6 +18,7 @@ LOG = easylogger.LOG
 twilio = TwilioClient()
 venmo = VenmoClient()
 sky = SkyClient()
+fb_builder = FacebookUserClientBuilder()
 # class InvalidFileError(Exception):
 #     status_code = 400
 
@@ -177,9 +179,11 @@ def facebook_signup():
 def process_facebook_signup():
     # NOW WE LEARN THEIR MOST RECENT PICTURES,
     # AND MAYBE WE THROW AND ERROR IF THEY DON'T HAVE ENOUGH
+    access_token = request.args()['accessToken']
 
-    # Note that we get *two* responses from facebook here -- one when
-    # we load, one when they authorize (or not)
+    fb_user = fb_builder(current_user, access_token)
+
+    photos = fb_user.get_photos()
 
     return redirect(url_for("profile"))
 

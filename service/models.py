@@ -10,11 +10,14 @@ class Person(db.Document, UserMixin):
     # number = db.StringField(required=True, unique=True)
     # FUCKS UP TESTING
     number = db.StringField(required=True)
-    access_token = db.StringField(required=True)
+    vm_access_token = db.StringField(required=True)
     email = db.EmailField(required=True)
     friends = db.ListField(db.ReferenceField('Person'))
 
-    portraits = db.ListField(db.ImageField())
+    fb_access_token = db.StringField()
+    fb_id = db.IntField()
+
+    # portraits = db.ListField(db.ImageField())
     bills_paid = db.ListField(db.ReferenceField('Bill'))
     bills_owed = db.ListField(db.ReferenceField('Bill'))
 
