@@ -279,6 +279,8 @@ class SkyClient(object):
                             PhotoTag(person.number,
                                      tag['center']['x'],
                                      tag['center']['y'])
+                LOG.debug("Checking if tags match. photo_tag: ", photo_tag)
+                LOG.debug("orignal.tags: ", orignal.tags)
                 if original.tag_matches(photo_tag):
                     possible_tags.append(ConfidentTag(photo_tag,
                                                       confidence,
@@ -288,8 +290,12 @@ class SkyClient(object):
                 self._update_tids(tids, possible_tags)
 
         LOG.debug("found tids: ", tids)
-        LOG.debug("About to start training...")
-        self._train_person_on_tids(person, tids)
+
+        if tids:
+            LOG.debug("About to start training...")
+            self._train_person_on_tids(person, tids)
+        else:
+            LOG.debug("Didn't find any pictures to train on.")
 
     def find_user_numbers_in(self, image):
         resp = self.client.faces_recognize("all",
