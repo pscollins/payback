@@ -328,25 +328,23 @@ class FacebookUserClient:
         self._secret_key = secret_key
         self._person = person
 
-        self._get_auth_token()
-        self._get_fb_id()
+        fb_access_token = self._get_auth_token()
+        fb_id = self._get_fb_id()
 
-        LOG.debug("Got a person: ", person)
-        # Should just update here
-        # TODO: check to make sure new things aren't being made
-        self._person.save()
+        LOG.debug("Got an access_token and id: ", fb_access_token, fb_id)
+        self._person.update(fb_access_token=fb_access_token, fb_id=fb_id)
 
     def _get_fb_id(self):
         resp = self._client.request("/me")
 
-        self._person.fb_id = resp["id"]
+        return resp["id"]
 
     def _get_auth_token(self):
         resp = self._client.extend_access_token(self._client_id,
                                                 self._secret_key)
         LOG.debug("facebook response: ", resp)
 
-        self._person.fb_access_token = resp["access_token"]
+        return resp["access_token"]
 
     def get_photos(self):
         # Looks like we get 20-30ish from the API without going
@@ -389,7 +387,9 @@ class TaggedPhoto:
     def __repr__(self):
         FMT = 'TaggedPhoto(url="{}", tags=[{}], pil={})'
 
-        return FMT.format(self.url, ",".join(self.tags), self.pil)
+        return FMT.format(self.url,
+                          ",".join([str(x) for x in self.tags]),
+                          self.pil)
 
     @classmethod
     def from_fb_resp(cls, fb_resp, pil=None):
