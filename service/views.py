@@ -56,6 +56,8 @@ def apply_bill_for(request_, amount_str):
     nums_to_bill = sky.find_user_numbers_in(files_dict.get("to_ident"))
 
     # CAN WE DO THIS MORE ELEGANTLY????????
+    # TODO: HANDLE THE CASE WHERE WE MATCH SOMEONE WHO DOESN'T EXIST,
+    # REMOVE DUPLICATE PERSON MATCHES
     users_to_bill = [Person.objects(number=num)[0]
                      for num in nums_to_bill]
 
@@ -221,10 +223,10 @@ def profile():
         flash('images added.')
 
     if current_user.is_authenticated():
-        n = current_user.name
+        name = current_user.name
     else:
-        n = 'Stranger'
-    return render_template("my_profile.html", username=n)
+        name = 'Stranger'
+    return render_template("my_profile.html", username=name)
 
 
 if __name__ == "__main__":

@@ -19,15 +19,18 @@ data-show-faces="true" data-auto-logout-link="false">
 
 <script>
 function loginStateCallback(response) {
-    console.log("Got a response from Facebook.");
-    console.log("Response: ", response);
+  console.log("Got a response from Facebook.");
+  console.log("Response: ", response);
 
   if(response.status == 'connected') {
     console.log("Something went right!");
-    window.location.href = "/process_facebook_signup";
+    console.log("Parameter-formated authResponse: " +
+                $.param(response.authResponse));
+    window.location.href = "/process_facebook_signup?" +
+                           $.param(response.authResponse);
   } else {
-      console.log("Something went wrong!");
-    }
+    console.log("Something went wrong!");
+  }
 }
 
 function checkLoginState() {
