@@ -167,6 +167,7 @@ def register_new():
 def facebook_signup():
     add_training_imgs(request, current_user)
 
+    # Not sure what scope we want here
     return render_template("facebook_signup.html")
 
 @app.route("/process_facebook_signup", methods=["GET"])
