@@ -1,13 +1,14 @@
 import logging
 # import requests
 
-from flask import Flask, request, render_template, make_response, redirect, url_for, flash
-from flask.ext.login import login_user, logout_user, current_user, login_required
+from flask import request, render_template, make_response, redirect, url_for,\
+    flash
+from flask.ext.login import login_user, logout_user, current_user,\
+    login_required
 from manager import Manager
 from utils import easylogger
 from service import app, login_manager
-from engine.engine import TwilioClient, \
-     VenmoClient, TwilReq, SkyClient
+from engine.engine import TwilioClient, VenmoClient, TwilReq, SkyClient
 from models import Person, Bill
 
 
@@ -75,11 +76,13 @@ def apply_bill_for(request_, amount_str):
 
     # ADD IN CHECK SO YOU DON'T BILL ME
     for user in users_to_bill:
-        bill = Bill(from_=current_user.id, to=user, amount=float(amt_per_person))
+        bill = Bill(from_=current_user.id, to=user,
+                    amount=float(amt_per_person))
         bill.save()
         twilio.send_auth_text(bill)
 
-    flash('Sent a bill to {}.'.format(", ".join([u.name for u in users_to_bill])))
+    flash('Sent a bill to {}.'.format(", ".join([u.name for u in
+                                                 users_to_bill])))
     return len(users_to_bill)
 
 @app.route("/mobile", methods=["GET"])
@@ -167,7 +170,7 @@ def facebook_signup():
 
     return render_template("facebook_signup.html")
 
-@app.route("/process_facebook_signup", methods=["GET"]):
+@app.route("/process_facebook_signup", methods=["GET"])
 @login_required
 def process_facebook_signup():
     # NOW WE LEARN THEIR MOST RECENT PICTURES,
