@@ -332,8 +332,13 @@ class FacebookUserClient:
         fb_id = self._get_fb_id()
 
         LOG.debug("Got an access_token and id: ", fb_access_token, fb_id)
-        self._person.update(set__fb_access_token=fb_access_token,
-                            set__fb_id=fb_id)
+        # self._person.update(set__fb_access_token=fb_access_token,
+        #                     set__fb_id=fb_id)
+
+        self._person.fb_access_token = fb_access_token
+        self._person.fb_id = fb_id
+
+        self._person.save()
 
     def _get_fb_id(self):
         resp = self._client.request("/me")
@@ -347,15 +352,16 @@ class FacebookUserClient:
 
         return resp["access_token"]
 
-    def get_photos(self):
+    def get_photos(self, limit=3):
         # Looks like we get 20-30ish from the API without going
         # through cursor bullshit. Let's just use those for now
+        # SMALL LIMIT FOR TESTING
 
         resp = self._client.request("{}/photos".format(self._person.fb_id))
 
         LOG.debug("got photo response: ", resp)
-
-        return [TaggedPhoto.from_fb_resp(pic_resp) for pic_resp in resp["data"]]
+        ret = [TaggedPhoto.from_fb_resp(pic_resp) for pic_resp in resp["data"]]
+        return ret[:limit]
 
     def get_friends(self):
         raise NotImplementedError
