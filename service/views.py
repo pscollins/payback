@@ -176,6 +176,9 @@ def process_facebook_signup():
     # NOW WE LEARN THEIR MOST RECENT PICTURES,
     # AND MAYBE WE THROW AND ERROR IF THEY DON'T HAVE ENOUGH
 
+    # Note that we get *two* responses from facebook here -- one when
+    # we load, one when they authorize (or not)
+
     return redirect(url_for("profile"))
 
 
