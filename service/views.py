@@ -189,11 +189,10 @@ def process_facebook_signup():
 
     fb_user = fb_builder.client_for_person(current_user, access_token)
 
-    photos = fb_user.get_photos()
+    tagged_photos = fb_user.get_photos()
 
-    LOG.debug("Got photos: ", photos)
-    tagged_photos = [TaggedPhoto.from_fb_resp(photo) for photo
-                     in photos]
+    LOG.debug("Got photos: ", tagged_photos)
+
 
     LOG.debug("Got tagged photos: ", tagged_photos)
     LOG.debug("About to submit to SkyBiometry...")
