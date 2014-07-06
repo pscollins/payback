@@ -202,7 +202,9 @@ class SkyClient(object):
 
     def _train_person_on_tids(self, person, tids):
         # set() because dupes break the API
-        self.client.tags_save(tids=",".join(set(tids)),
+        no_duplicates = set(tids)
+        LOG.debug("dupes removed: ", no_duplicates)
+        self.client.tags_save(tids=",".join(no_duplicates),
                               uid=self._qualify(person.number),
                               label=person.name)
 
