@@ -394,7 +394,7 @@ class TaggedPhoto:
     CROP_PORTION_WIDTH = .05
     CROP_PORTION_HEIGHT = .05
 
-    TAG_MARGIN = .05
+    TAG_MARGIN = 1
 
     def __init__(self, url=None, tags=None, pil=None):
         self.url = url
