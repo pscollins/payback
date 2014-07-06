@@ -332,7 +332,8 @@ class FacebookUserClient:
         fb_id = self._get_fb_id()
 
         LOG.debug("Got an access_token and id: ", fb_access_token, fb_id)
-        self._person.update(fb_access_token=fb_access_token, fb_id=fb_id)
+        self._person.update(set__fb_access_token=fb_access_token,
+                            set__fb_id=fb_id)
 
     def _get_fb_id(self):
         resp = self._client.request("/me")
