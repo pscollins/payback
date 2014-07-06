@@ -331,6 +331,7 @@ class FacebookUserClient:
         self._get_auth_token()
         self._get_fb_id()
 
+        LOG.debug("Got a person: ", person)
         # Should just update here
         # TODO: check to make sure new things aren't being made
         self._person.save()

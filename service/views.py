@@ -31,6 +31,12 @@ def load_user(phone_number):
 
 
 @app.route("/proc_file", methods=["GET", "POST"])
+@login_required
+def proc_file():
+    add_training_imgs(request, current_user)
+    flash("Added new image(s)!")
+    return redirect(url_for('profile'))
+
 def add_training_imgs(request_, user):
     files_dict = request_.files
     LOG.error("request: ", request.__dict__)
