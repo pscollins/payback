@@ -265,7 +265,8 @@ class SkyClient(object):
                                            urls=urls)
         tids = []
         for photo in resp['photos']:
-            original = self._find_matching_original(original_photos, photo)
+            original = self._find_matching_original(original_photos,
+                                                    photo['url'])
             possible_tags = []
             for tag in photo['tags']:
                 LOG.debug("processing tag: ", tag)
