@@ -192,11 +192,11 @@ class SkyClient(object):
         self.client = face_client.FaceClient(client_id, secret_key)
 
     # this is their format for whatever reason
-    @classmethod
+    # @classmethod
     def _qualify(cls, ident):
         return "{}@{}".format(ident, cls.NAMESPACE)
 
-    @classmethod
+    # @classmethod
     def _unqualify(cls, ident):
         return ident.split("@")[0]
 
@@ -260,8 +260,8 @@ class SkyClient(object):
         # TODO: also a "train" parameter here that's not documented
         # TODO: we should probably care about SkyBio's 'threshold'
 
-        qualified_person = self.qualify(person.number)
-        resp = self.client.faces_recognize(self.qualify(person.number),
+        qualified_person = self._qualify(person.number)
+        resp = self.client.faces_recognize(self._qualify(person.number),
                                            urls=urls)
         tids = []
         for photo in resp['photos']:
