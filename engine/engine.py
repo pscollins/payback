@@ -223,7 +223,7 @@ class SkyClient(object):
 
         tids = []
 
-        for resp in resps['photos']:
+        for resp in resps:
             for photo in resp['photos']:
                 if len(photo['tags']) != 1:
                     raise TooManyFacesError
