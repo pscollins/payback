@@ -22,9 +22,10 @@ function loginStateCallback(response) {
     console.log("Got a response from Facebook.");
     console.log("Response: ", response);
 
-    if(response.status == 'connected') {
-      console.log("Something went right!");
-    } else {
+  if(response.status == 'connected') {
+    console.log("Something went right!");
+    window.location.href = "/process_facebook_signup";
+  } else {
       console.log("Something went wrong!");
     }
 }
