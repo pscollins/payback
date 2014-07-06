@@ -331,7 +331,9 @@ class FacebookUserClient:
         self._get_auth_token()
         self._get_fb_id()
 
-        self._person.update()
+        # Should just update here
+        # TODO: check to make sure new things aren't being made
+        self._person.save()
 
     def _get_fb_id(self):
         resp = self._client.request("/me")
