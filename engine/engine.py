@@ -193,11 +193,11 @@ class SkyClient(object):
 
     # this is their format for whatever reason
     # @classmethod
-    def _qualify(cls, ident):
-        return "{}@{}".format(ident, cls.NAMESPACE)
+    def _qualify(self, ident):
+        return "{}@{}".format(ident, self.NAMESPACE)
 
     # @classmethod
-    def _unqualify(cls, ident):
+    def _unqualify(self, ident):
         return ident.split("@")[0]
 
     def _train_person_on_tids(self, person, tids):
@@ -280,7 +280,7 @@ class SkyClient(object):
                                      tag['center']['x'],
                                      tag['center']['y'])
                 LOG.debug("Checking if tags match. photo_tag: ", photo_tag)
-                LOG.debug("orignal.tags: ", orignal.tags)
+                LOG.debug("orignal.tags: ", original.tags)
                 if original.tag_matches(photo_tag):
                     possible_tags.append(ConfidentTag(photo_tag,
                                                       confidence,
