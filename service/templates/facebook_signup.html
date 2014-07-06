@@ -2,9 +2,9 @@
 {% from "macro.html" import disable_uploader, multifile_upload %}
 
 {% block content %}
-<p> Next, link your account to Facebook so that we can learn what you look
- like from your pictures. </p>
-
+<p> Next, you can link your account to Facebook so that we can learn
+ what you look like from your pictures. This step is optional, but it
+ will help PayBack recognize you in the future. </p>
 
 <fb:login-button scope="public_profile,email,user_photos" onlogin="checkLoginState();"
 show_faces="true" size="xlarge" max_rows="1" >
@@ -12,6 +12,10 @@ show_faces="true" size="xlarge" max_rows="1" >
 <!-- <div id="upload-button" class="fb-login-button" data-max-rows="1" data-size="xlarge"
 data-show-faces="true" data-auto-logout-link="false">
 </div> -->
+
+<a href="/profile" role="button" class="btn btn-danger btn-large">Skip</button>
+
+
 {% endblock %}
 
 {% block script %}

@@ -176,7 +176,7 @@ class TwilioClient(object):
 
     def payment_conf(self, person_billed, bills_paid):
         paid_msgs = ",".join(["To {}: ${:.2f}".format(b.to.name, b.amount)
-                    for b in bills_paid])
+                              for b in bills_paid])
 
         return self.RESP_FMT.format(paid_msgs)
 
@@ -241,7 +241,7 @@ class SkyClient(object):
                     if photo.url == url][0]
         except IndexError:
             # should never see this
-            raise UnrecognizedPhotoError
+            raise UnrecognizedUserError
 
     def _find_best_uid_from_tag_json(self, tag):
         uid_and_conf = max(tag['uids'], key=lambda x: x['confidence'])
@@ -254,7 +254,6 @@ class SkyClient(object):
         except ValueError:
             pass
 
-
     def train_for_facebook(self, person, original_photos):
         urls = ",".join([photo.url for photo in original_photos])
         # TOOD: what's "aggressive"? Do we want that?
@@ -263,7 +262,7 @@ class SkyClient(object):
 
         qualified_person = self.qualify(person.number)
         resp = self.client.faces_recognize(self.qualify(person.number),
-                                            urls=urls)
+                                           urls=urls)
         tids = []
         for photo in resp['photos']:
             original = self._find_matching_original(original_photos, photo)
@@ -271,7 +270,7 @@ class SkyClient(object):
             for tag in photo['tags']:
                 LOG.debug("processing tag: ", tag)
                 # Not sure if we ever have more than one uid here
-                uid, conf = self._find_best_uid_from_tag_json(tag)
+                uid, confidence = self._find_best_uid_from_tag_json(tag)
                 photo_tag = (uid == qualified_person) and \
                             PhotoTag(person.number,
                                      tag['center']['x'],
@@ -286,12 +285,7 @@ class SkyClient(object):
 
         LOG.debug("found tids: ", tids)
         LOG.debug("About to start training...")
-        self._train_person_on_tids(self, person, tids)
-
-
-
-
-
+        self._train_person_on_tids(person, tids)
 
     def find_user_numbers_in(self, image):
         resp = self.client.faces_recognize("all",
@@ -345,7 +339,8 @@ class FacebookUserClient:
         self._person.fb_id = resp["id"]
 
     def _get_auth_token(self):
-        resp = self._client.extend_access_token(self._client_id, self._secret_key)
+        resp = self._client.extend_access_token(self._client_id,
+                                                self._secret_key)
         LOG.debug("facebook response: ", resp)
 
         self._person.fb_access_token = resp["access_token"]
@@ -388,6 +383,11 @@ class TaggedPhoto:
         self.tags = tags
         self.pil = pil
 
+    def __repr__(self):
+        FMT = 'TaggedPhoto(url="{}", tags=[{}], pil={})'
+
+        return FMT.format(self.url, ",".join(self.tags), self.pil)
+
     @classmethod
     def from_fb_resp(cls, fb_resp, pil=None):
         url = fb_resp["source"]
@@ -396,7 +396,7 @@ class TaggedPhoto:
             # This will be None if no person is in our db
             number = Person.objects(fb_id=resp['id']).first()
             tags.append(PhotoTag(number, float(resp["x"]),
-                                      float(resp["y"])))
+                                 float(resp["y"])))
 
         return TaggedPhoto(url, tags, pil)
 
@@ -406,19 +406,18 @@ class TaggedPhoto:
         # We have two different kinds of uids running around here -- that's bad
         url = skybio_resp["url"]
         tags = []
+        raise NotImplementedError
 
 
     def check_tag_matches(self, tag):
         try:
             matching_tag = [x for x in self.tags if x.number == tag.number][0]
-        except IndexError, TypeError:
+        except (IndexError, TypeError):
             # Fail if we were given None or a number that's not ours
             return False
 
         return ((abs(matching_tag.x - tag.x) <= self.TAG_MARGIN) and
                 (abs(matching_tag.y - tag.y) <= self.TAG_MARGIN))
-
-
 
     def get_face_cutouts(self):
         if not (self.tags and self.pil):

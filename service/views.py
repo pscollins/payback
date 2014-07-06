@@ -9,7 +9,7 @@ from manager import Manager
 from utils import easylogger
 from service import app, login_manager
 from engine.engine import TwilioClient, VenmoClient, TwilReq, SkyClient, \
-    FacebookUserClientBuilder
+    FacebookUserClientBuilder, TaggedPhoto
 from models import Person, Bill
 
 
@@ -181,9 +181,18 @@ def process_facebook_signup():
     # AND MAYBE WE THROW AND ERROR IF THEY DON'T HAVE ENOUGH
     access_token = request.args()['accessToken']
 
-    fb_user = fb_builder(current_user, access_token)
+    fb_user = fb_builder.client_for_person(current_user, access_token)
 
     photos = fb_user.get_photos()
+
+    LOG.debug("Got photos: ", photos)
+    tagged_photos = [TaggedPhoto.from_fb_resp(photo) for photo
+                     in photos['data']]
+
+    LOG.debug("Got tagged photos: ", tagged_photos)
+    LOG.debug("About to submit to SkyBiometry...")
+
+    sky.train_for_facebook(current_user, tagged_photos)
 
     return redirect(url_for("profile"))
 
