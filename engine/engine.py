@@ -424,7 +424,7 @@ class TaggedPhoto:
         raise NotImplementedError
 
 
-    def check_tag_matches(self, tag):
+    def tag_matches(self, tag):
         try:
             matching_tag = [x for x in self.tags if x.number == tag.number][0]
         except (IndexError, TypeError):
