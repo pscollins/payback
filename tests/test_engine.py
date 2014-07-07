@@ -6,6 +6,7 @@ import json
 import service.models
 import logging
 import os.path
+import copy
 
 from PIL import Image
 
@@ -13,7 +14,9 @@ from payback.engine import engine
 from photos_response import TEST_RESPONSE
 from photos_for_tags import SMALL_PHOTO, VALID_SMALL_PHOTO
 from payback.utils.easylogger import log_at, LOG
-from skybio_responses import FACES_DETECT_TAG, FACES_DETECT_NO_TAGS
+from skybio_responses import FACES_DETECT_TAG, FACES_DETECT_NO_TAGS,\
+    FACES_RECOGNIZE_NO_TAGS, FACES_RECOGNIZE_TAG, CONFIDENT_UID,\
+    UNCONFIDENT_UID
 
 
 mock_models = mock.create_autospec(service.models)
@@ -46,8 +49,6 @@ class TestSkyClient(unittest.TestCase):
     def tearDown(self):
         self.client.client.reset_mock()
 
-        FACES_DETECT_NO_TAGS['photos'][0]['tags'] = []
-
     def test_init(self):
         pass
 
@@ -77,7 +78,7 @@ class TestSkyClient(unittest.TestCase):
 
 
     def test_train_for_user_fails(self):
-        response = FACES_DETECT_NO_TAGS
+        response = copy.deepcopy(FACES_DETECT_NO_TAGS)
         self.client.client.faces_detect.return_value = response
 
         with self.assertRaises(engine.TooFewFacesError):
@@ -92,7 +93,7 @@ class TestSkyClient(unittest.TestCase):
 
 
     def test__get_tids_to_train_for_user(self):
-        response = FACES_DETECT_NO_TAGS
+        response = copy.deepcopy(FACES_DETECT_NO_TAGS)
         response['photos'][0]['tags'] = [FACES_DETECT_TAG]
 
         self.client.client.faces_detect.return_value = response
@@ -103,7 +104,7 @@ class TestSkyClient(unittest.TestCase):
         self.assertEqual(tids, ['test_tid', 'test_tid'])
 
     def test_train_for_user_passes(self):
-        response = FACES_DETECT_NO_TAGS
+        response = copy.deepcopy(FACES_DETECT_NO_TAGS)
         response['photos'][0]['tags'] = [FACES_DETECT_TAG]
 
         self.client.client.faces_detect.return_value = response
@@ -126,6 +127,61 @@ class TestSkyClient(unittest.TestCase):
 
         self.assertEqual(self.client._find_matching_original(originals, "abc"),
                          originals[0])
+
+    def test__find_best_uid_from_tag_json(self):
+        tag = copy.deepcopy(FACES_RECOGNIZE_TAG)
+
+        self.assertEqual(self.client._find_best_uid_from_tag_json(tag),
+                         (None, None))
+
+        tag['uids'] = [UNCONFIDENT_UID, CONFIDENT_UID]
+
+        self.assertEqual(self.client._find_best_uid_from_tag_json(tag),
+                         ("confident@TESTNS", 98))
+
+    def test__update_tids(self):
+        tids = []
+
+        self.client._update_tids(tids, [])
+
+        self.assertEqual(tids, [])
+
+        self.client._update_tids(tids, [engine.ConfidentTag(None, 0, "test1"),
+                                        engine.ConfidentTag(None, 90, "test2")])
+
+        self.assertEqual(tids, ["test2"])
+
+    def test__recognize_for_person(self):
+        self.client._recognize_for_person(self.person, foo="bar")
+
+        self.client.client.faces_recognize.assert_called_once_with(
+            "blahblah@TESTNS", foo="bar")
+
+    def test__update_possible_tags(self):
+        tag = copy.deepcopy(FACES_RECOGNIZE_TAG)
+        self.client._find_best_uid_from_tag_json = mock.MagicMock(
+            return_value=("blahblah@TESTNS", 25))
+
+        original = mock.MagicMock(autospec=engine.TaggedPhoto)
+        original.tag_matches.return_value = False
+
+        possible_tags = []
+
+        self.client._update_possible_tags(possible_tags, tag, self.person,
+                                          original)
+
+        self.assertEqual(possible_tags, [])
+
+        original.tag_matches.return_value = True
+
+        self.client._update_possible_tags(possible_tags, tag, self.person,
+                                          original)
+
+        self.assertEqual(possible_tags, [engine.ConfidentTag(
+            engine.PhotoTag("blahblah", 64.75, 48.24),
+            25,
+            "testing_tid")])
+
 
 
 class TestFacebookUserClient(unittest.TestCase):

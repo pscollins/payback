@@ -263,6 +263,7 @@ class SkyClient(object):
 
     @staticmethod
     def _find_best_uid_from_tag_json(tag):
+        # FIXME: this is actually the whole response, not a tag
         try:
             uid_and_conf = max(tag['uids'], key=lambda x: x['confidence'])
             return uid_and_conf['uid'], uid_and_conf['confidence']

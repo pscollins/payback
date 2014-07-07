@@ -1,3 +1,4 @@
+TEST_OMIT=venv/*,engine/facebook*,tests/*,utils/*
 
 
 .PHONY: make-env
@@ -10,4 +11,9 @@ start-env:
 test:
 	. ./activate
 	coverage run --branch tests/test_engine.py
-	coverage report --omit=venv/*,engine/facebook*,tests/*,utils/*
+	coverage report --omit=$(TEST_OMIT)
+
+test-html:
+	. ./activate
+	coverage run --branch tests/test_engine.py
+	coverage html --omit=$(TEST_OMIT) --rcfile=.coveragerc

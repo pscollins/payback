@@ -65,5 +65,8 @@ engine/Pictures/*/*.jpg
 engine/Pictures/*.png
 tests/test_cutouts
 
+# HTML Coverage Reports
+htmlcov/
+
 # Config
 engine/engine_cfg.py
