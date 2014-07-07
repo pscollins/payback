@@ -49,21 +49,21 @@ class TestSkyClient(unittest.TestCase):
     def tearDown(self):
         self.client.client.reset_mock()
 
-    def test_init(self):
-        pass
-
+    @log_at(logging.INFO)
     def test__qualify(self):
         TO_QUALIFY = "foobar"
 
         self.assertEqual("foobar@TESTNS",
                          self.client._qualify(TO_QUALIFY))
 
+    @log_at(logging.INFO)
     def test__unqualify(self):
         TO_UNQUALIFY = "foobar@bazbat"
 
         self.assertEqual("foobar",
                          self.client._unqualify(TO_UNQUALIFY))
 
+    @log_at(logging.INFO)
     def test__train_person_on_tids(self):
         tids = ["1", "1", "2", "3"]
 
@@ -76,7 +76,7 @@ class TestSkyClient(unittest.TestCase):
         self.client.client.faces_train.assert_called_once_with(
             "blahblah@TESTNS")
 
-
+    @log_at(logging.INFO)
     def test_train_for_user_fails(self):
         response = copy.deepcopy(FACES_DETECT_NO_TAGS)
         self.client.client.faces_detect.return_value = response
@@ -91,7 +91,7 @@ class TestSkyClient(unittest.TestCase):
         with self.assertRaises(engine.TooManyFacesError):
             self.client.train_for_user(self.person, ['not an image'])
 
-
+    @log_at(logging.INFO)
     def test__get_tids_to_train_for_user(self):
         response = copy.deepcopy(FACES_DETECT_NO_TAGS)
         response['photos'][0]['tags'] = [FACES_DETECT_TAG]
@@ -116,6 +116,7 @@ class TestSkyClient(unittest.TestCase):
         self.client._train_person_on_tids.assert_called_once_with(
             self.person, ['test_tid'])
 
+    @log_at(logging.INFO)
     def test__find_matching_original(self):
         originals = [
             engine.TaggedPhoto("abc"),
@@ -128,6 +129,7 @@ class TestSkyClient(unittest.TestCase):
         self.assertEqual(self.client._find_matching_original(originals, "abc"),
                          originals[0])
 
+    @log_at(logging.INFO)
     def test__find_best_uid_from_tag_json(self):
         tag = copy.deepcopy(FACES_RECOGNIZE_TAG)
 
@@ -139,6 +141,7 @@ class TestSkyClient(unittest.TestCase):
         self.assertEqual(self.client._find_best_uid_from_tag_json(tag),
                          ("confident@TESTNS", 98))
 
+    @log_at(logging.INFO)
     def test__update_tids(self):
         tids = []
 
@@ -151,12 +154,14 @@ class TestSkyClient(unittest.TestCase):
 
         self.assertEqual(tids, ["test2"])
 
+    @log_at(logging.INFO)
     def test__recognize_for_person(self):
         self.client._recognize_for_person(self.person, foo="bar")
 
         self.client.client.faces_recognize.assert_called_once_with(
             "blahblah@TESTNS", foo="bar")
 
+    @log_at(logging.INFO)
     def test__update_possible_tags(self):
         tag = copy.deepcopy(FACES_RECOGNIZE_TAG)
         self.client._find_best_uid_from_tag_json = mock.MagicMock(
@@ -181,6 +186,55 @@ class TestSkyClient(unittest.TestCase):
             engine.PhotoTag("blahblah", 64.75, 48.24),
             25,
             "testing_tid")])
+
+    def test__find_tids_for_facebook(self):
+        resp = copy.deepcopy(FACES_RECOGNIZE_NO_TAGS)
+        resp['photos'][0]['tags'] = [copy.deepcopy(FACES_RECOGNIZE_TAG)]
+        resp['photos'][0]['tags'][0]['uids'] = [{
+            'uid': 'blahblah@TESTNS', 'confidence': 15
+        }]
+
+        LOG.debug("response for testing: ", resp)
+        original_photo = mock.MagicMock()
+        original_photo.tag_matches.return_value = True
+
+        self.client._find_matching_original = mock.MagicMock(
+            return_value=original_photo)
+
+        tids = self.client._find_tids_for_facebook(self.person,
+                                                   [original_photo],
+                                                   resp)
+
+        self.assertEqual(tids, ["testing_tid"])
+
+    def test_train_for_facebook(self):
+        self.client._recognize_for_person = mock.MagicMock(
+            return_value="some response")
+        self.client._find_tids_for_facebook = mock.MagicMock(
+            return_value=[])
+        self.client._train_person_on_tids = mock.MagicMock()
+
+        original_photos = [
+            engine.TaggedPhoto('1'),
+            engine.TaggedPhoto('2'),
+            engine.TaggedPhoto('3')
+        ]
+
+        self.client.train_for_facebook(self.person, original_photos)
+
+        self.client._recognize_for_person.assert_called_once_with(
+            self.person, url="1,2,3")
+        self.client._find_tids_for_facebook.assert_called_once_with(
+            self.person, original_photos, "some response")
+        self.assertFalse(self.client._train_person_on_tids.called)
+
+        self.client._find_tids_for_facebook.return_value = ['4', '5', '6']
+
+        self.client.train_for_facebook(self.person, original_photos)
+
+        self.client._train_person_on_tids.assert_called_once_with(
+            self.person, ['4', '5', '6'])
+
 
 
 

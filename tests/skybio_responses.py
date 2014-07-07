@@ -78,7 +78,7 @@ FACES_RECOGNIZE_TAG = {
 FACES_RECOGNIZE_NO_TAGS = {
     "photos" : [
         {
-            "url" : "http://tinyurl.com/673cksa",
+            "url" : "testing_url",
             "pid" : "F@053a763a06d9d578430b9f2d06c686bb_f0bf798c4c4e8",
             "width" : 1024,
             "height" : 767,

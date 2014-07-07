@@ -1,8 +1,10 @@
 #!/usr/bin/env python
-from twilio.rest import TwilioRestClient
 import collections
 import requests
 import face_client
+
+from twilio.rest import TwilioRestClient
+from PIL import Image
 
 from payback.engine import facebook
 from payback.engine.engine_cfg import TW_CLIENT_ID, TW_SECRET_KEY, \
@@ -263,7 +265,6 @@ class SkyClient(object):
 
     @staticmethod
     def _find_best_uid_from_tag_json(tag):
-        # FIXME: this is actually the whole response, not a tag
         try:
             uid_and_conf = max(tag['uids'], key=lambda x: x['confidence'])
             return uid_and_conf['uid'], uid_and_conf['confidence']
@@ -306,6 +307,9 @@ class SkyClient(object):
             original = self._find_matching_original(original_photos,
                                                     photo['url'])
             possible_tags = []
+            LOG.debug("photo: ", photo)
+            LOG.debug("tag to iterate on: ",
+                      [tag for tag in photo['tags'] if tag['uids']])
             for tag in [tag for tag in photo['tags'] if tag['uids']]:
                 LOG.debug("processing tag: ", tag)
                 # Not sure if we ever have more than one uid here
@@ -313,8 +317,10 @@ class SkyClient(object):
                 self._update_possible_tags(possible_tags, tag, person, original)
 
             LOG.debug("Got possible tags: ", possible_tags)
+
             self._update_tids(tids, possible_tags)
 
+        return tids
 
     def train_for_facebook(self, person, original_photos):
         urls = ",".join([photo.url for photo in original_photos])
@@ -336,6 +342,13 @@ class SkyClient(object):
             self._train_person_on_tids(person, tids)
         else:
             LOG.debug("Didn't find any pictures to train on.")
+
+    def tagged_photo_from_image(self, image):
+        resp = self.client.faces_recognize("all",
+                                           file=image,
+                                           namespace=self.NAMESPACE)
+
+        tagged_photo = TaggedPhoto.from_skybio_resp(resp, pil=Image.open(image))
 
     def find_user_numbers_in(self, image):
         resp = self.client.faces_recognize("all",
