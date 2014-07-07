@@ -1,7 +1,5 @@
-from wtforms import *
+# from wtforms import *
 
 
-class ProfileForm(Form):
-    username = StringField()
-    
-    
+# class ProfileForm(Form):
+#     username = StringField()

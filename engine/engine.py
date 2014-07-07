@@ -326,7 +326,7 @@ class SkyClient(object):
         return to_return
 
 
-class FacebookUserClientBuilder:
+class FacebookUserClientBuilder(object):
     def __init__(self, client_id=FB_CLIENT_ID, secret_key=FB_SECRET_KEY):
         self._client_id = client_id
         self._secret_key = secret_key
@@ -336,8 +336,8 @@ class FacebookUserClientBuilder:
                                   self._secret_key)
 
 
-class FacebookUserClient:
-    def __init__(self, person, auth_token, client_id, secret_key):
+class FacebookUserClient(object):
+    def __init__(self, person, auth_token, client_id, secret_key,
         self._client = facebook.GraphAPI(access_token=auth_token)
         self._client_id = client_id
         self._secret_key = secret_key
@@ -393,7 +393,7 @@ ConfidentTag = collections.namedtuple("ConfidentTag", ["tag",
                                                        "confidence",
                                                        "tid"])
 
-class TaggedPhoto:
+class TaggedPhoto(object):
     # NOTE THAT WE AREN'T GOING THROUGH ANY OF THIS "PAGING" BULLSHIT
     # AND THAT MIGHT FUCK US UP
     CROP_PORTION_WIDTH = .05
@@ -419,10 +419,13 @@ class TaggedPhoto:
         tags = []
         for resp in fb_resp['tags']['data']:
             # This will be None if no person is in our db
-            person = Person.objects(fb_id=resp['id']).first()
-            number = person.number if person else None
-            tags.append(PhotoTag(number, float(resp["x"]),
-                                 float(resp["y"])))
+            try:
+                 person = Person.objects(fb_id=resp['id']).first()
+                 number = person.number if person else None
+                 tags.append(PhotoTag(number, float(resp["x"]),
+                                      float(resp["y"])))
+            except KeyError:
+                 pass
 
         return TaggedPhoto(url, tags, pil)
 

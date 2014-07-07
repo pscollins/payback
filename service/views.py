@@ -5,20 +5,19 @@ from flask import request, render_template, make_response, redirect, url_for,\
     flash
 from flask.ext.login import login_user, logout_user, current_user,\
     login_required
-from manager import Manager
 from utils import easylogger
-from service import app, login_manager
-from engine.engine import TwilioClient, VenmoClient, TwilReq, SkyClient, \
-    FacebookUserClientBuilder, TaggedPhoto
+import service.app #import app, login_manager
+# from engine.engine import TwilioClient, VenmoClient,\
+#     TwilReq, SkyClient, FacebookUserClientBuilder, TaggedPhoto
+import engine
 from models import Person, Bill
 
 
-manager = Manager()
 LOG = easylogger.LOG
-twilio = TwilioClient()
-venmo = VenmoClient()
-sky = SkyClient()
-fb_builder = FacebookUserClientBuilder()
+twilio = engine.TwilioClient()
+venmo = engine.VenmoClient()
+sky = engine.SkyClient()
+fb_builder = engine.FacebookUserClientBuilder()
 # class InvalidFileError(Exception):
 #     status_code = 400
 
@@ -30,7 +29,7 @@ def load_user(phone_number):
     return Person.objects(number=phone_number).first()
 
 
-@app.route("/proc_file", methods=["GET", "POST"])
+@service.app.route("/proc_file", methods=["GET", "POST"])
 @login_required
 def proc_file():
     add_training_imgs(request, current_user)
@@ -95,12 +94,12 @@ def apply_bill_for(request_, amount_str):
                                                  users_to_bill])))
     return len(users_to_bill)
 
-@app.route("/mobile", methods=["GET"])
+@service.app.route("/mobile", methods=["GET"])
 @login_required
 def render_simple_upload():
     return render_template("simple_upload.html")
 
-@app.route("/mobile_upload", methods=["POST"])
+@service.app.route("/mobile_upload", methods=["POST"])
 @login_required
 def apply_uploaded_file():
     LOG.debug("forwarding request: ", request)
@@ -113,7 +112,7 @@ def apply_uploaded_file():
 
     return redirect(url_for('profile'))
 
-@app.route("/", methods=["GET"])
+@service.app.route("/", methods=["GET"])
 def render_login():
     if current_user.is_authenticated():
         return redirect(url_for('profile'))
@@ -121,7 +120,7 @@ def render_login():
     return render_template("index.html",
                            register_url=venmo.get_auth_url())
 
-@app.route("/text_recv", methods=["GET"])
+@service.app.route("/text_recv", methods=["GET"])
 def receive_text():
     params = request.args
     LOG.debug("got request: ", request)
@@ -166,13 +165,13 @@ def create_new(person):
     return redirect(url_for('register_new'))
 
 
-@app.route("/register_new", methods=["GET"])
+@service.app.route("/register_new", methods=["GET"])
 @login_required
 def register_new():
     return render_template("register_new.html")
 
 
-@app.route("/facebook_signup", methods=["POST"])
+@service.app.route("/facebook_signup", methods=["POST"])
 @login_required
 def facebook_signup():
     add_training_imgs(request, current_user)
@@ -180,7 +179,7 @@ def facebook_signup():
     # Not sure what scope we want here
     return render_template("facebook_signup.html")
 
-@app.route("/process_facebook_signup", methods=["GET"])
+@service.app.route("/process_facebook_signup", methods=["GET"])
 @login_required
 def process_facebook_signup():
     # NOW WE LEARN THEIR MOST RECENT PICTURES,
@@ -193,7 +192,6 @@ def process_facebook_signup():
 
     LOG.debug("Got photos: ", tagged_photos)
 
-
     LOG.debug("Got tagged photos: ", tagged_photos)
     LOG.debug("About to submit to SkyBiometry...")
 
@@ -202,7 +200,7 @@ def process_facebook_signup():
     return redirect(url_for("profile"))
 
 
-@app.route("/code_recv", methods=["GET"])
+@service.app.route("/code_recv", methods=["GET"])
 def process_venmo_code():
     '''
     Use the code given to us by the Venmo authentication to see if
@@ -220,7 +218,7 @@ def process_venmo_code():
         return create_new(new_person)
 
 
-@app.route('/logout')
+@service.app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('render_login'))
@@ -231,7 +229,7 @@ def logout():
 #     return Person.objects(number=usernum)[0]
 
 
-@app.route("/profile", methods=["GET", "POST"])
+@service.app.route("/profile", methods=["GET", "POST"])
 @login_required
 def profile():
     if request.method == "POST":
@@ -248,4 +246,4 @@ def profile():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+    service.app.run(host='0.0.0.0')

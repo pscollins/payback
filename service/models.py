@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-from service import app, db
+# from service import app, db
+from service.app import db
+
 from flask.ext.login import UserMixin
 
 # BE AWARE THAT TWILIO AND VENMO FORMAT PHONE NUMBERS DIFFERENTLY AND
@@ -15,7 +17,7 @@ class Person(db.Document, UserMixin):
     friends = db.ListField(db.ReferenceField('Person'))
 
     fb_access_token = db.StringField()
-    fb_id = db.IntField()
+    fb_id = db.StringField()
 
     # portraits = db.ListField(db.ImageField())
     bills_paid = db.ListField(db.ReferenceField('Bill'))
