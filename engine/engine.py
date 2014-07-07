@@ -3,14 +3,14 @@ from twilio.rest import TwilioRestClient
 import collections
 import requests
 import face_client
-import facebook
 
-from engine_cfg import TW_CLIENT_ID, TW_SECRET_KEY, \
+from payback.engine import facebook
+from payback.engine.engine_cfg import TW_CLIENT_ID, TW_SECRET_KEY, \
     VM_SECRET_KEY, VM_CLIENT_ID, \
     SB_CLIENT_ID, SB_SECRET_KEY, \
     FB_CLIENT_ID, FB_SECRET_KEY
-from utils import easylogger
-from service.models import Person, Bill
+from payback.utils import easylogger
+from payback.service.models import Person, Bill
 
 LOG = easylogger.LOG
 

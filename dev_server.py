@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
-import service.app
-import service.views
+# pylint: disable=unused-import
+
+from payback.service.app import app
+import payback.service.views
 
 
-service.app.app.run(host='0.0.0.0', debug=True)
+app.run(host='0.0.0.0', debug=True)
