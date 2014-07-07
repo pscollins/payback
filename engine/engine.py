@@ -130,7 +130,8 @@ class TwilioClient(object):
                  tw_secret_key=TW_SECRET_KEY):
         self.twilio = TwilioRestClient(tw_client_id, tw_secret_key)
 
-    def _plusify(self, num):
+    @staticmethod
+    def _plusify(num):
         return ("+{}" if not "+" in num else "{}").format(num)
 
     def send_auth_text(self, bill):
@@ -156,7 +157,8 @@ class TwilioClient(object):
         LOG.debug("message.sid: ", message.sid)
         return
 
-    def process_twilreq(self, twilreq):
+    @staticmethod
+    def process_twilreq(twilreq):
         # for Person.objects(number=twilreq.number):
         LOG.debug("inside process_twilreq")
         LOG.debug("twilreq: ", twilreq)
@@ -192,12 +194,11 @@ class SkyClient(object):
         self.client = face_client.FaceClient(client_id, secret_key)
 
     # this is their format for whatever reason
-    # @classmethod
     def _qualify(self, ident):
         return "{}@{}".format(ident, self.NAMESPACE)
 
-    # @classmethod
-    def _unqualify(self, ident):
+    @staticmethod
+    def _unqualify(ident):
         return ident.split("@")[0]
 
     def _train_person_on_tids(self, person, tids):
@@ -237,8 +238,8 @@ class SkyClient(object):
         LOG.debug("saving tags")
         self._train_person_on_tids(person, tids)
 
-
-    def _find_matching_original(self, original_photos, url):
+    @staticmethod
+    def _find_matching_original(original_photos, url):
         try:
             return [photo for photo in original_photos
                     if photo.url == url][0]
@@ -246,14 +247,16 @@ class SkyClient(object):
             # should never see this
             raise UnrecognizedUserError
 
-    def _find_best_uid_from_tag_json(self, tag):
+    @staticmethod
+    def _find_best_uid_from_tag_json(tag):
         try:
             uid_and_conf = max(tag['uids'], key=lambda x: x['confidence'])
             return uid_and_conf['uid'], uid_and_conf['confidence']
         except ValueError:
             return None, None
 
-    def _update_tids(self, tids, possible_tags):
+    @staticmethod
+    def _update_tids(tids, possible_tags):
         try:
             best_tag = max(possible_tags, key=lambda x: x.confidence)
             tids.append(best_tag.tid)
@@ -444,7 +447,7 @@ class TaggedPhoto(object):
                 tags.append(PhotoTag(number, float(resp["x"]),
                                      float(resp["y"])))
             except KeyError:
-                 pass
+                pass
 
         return TaggedPhoto(url, tags, pil)
 
