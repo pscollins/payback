@@ -38,7 +38,7 @@ class TestFacebookUserClient(unittest.TestCase):
                          extend_access_token=TEST_AUTH_TOKEN)
     # @mock.patch.object("facebook.GraphAPI", autospec=True)
     @mock.patch.object(service.models.Person, "save")
-    def setUp(self, mock_save, mock_request, mock_extend_access_token):
+    def _build_client(self, mock_save, mock_request, mock_extend_access_token):
         self.fb_client = engine.FacebookUserClient(self.TEST_PERSON,
                                                    self.TEST_ACCESS_TOKEN,
                                                    self.TEST_CLIENT_ID,
@@ -52,7 +52,7 @@ class TestFacebookUserClient(unittest.TestCase):
         return fb_client
 
     def test_init(self):
-        # fb_client = self._build_client()
+        fb_client = self._build_client()
         self.assertEqual(self.fb_client._person.fb_access_token,
                          "CAAIE..")
         self.assertEqual(self.fb_client._person.fb_id,

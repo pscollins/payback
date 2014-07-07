@@ -337,7 +337,7 @@ class FacebookUserClientBuilder(object):
 
 
 class FacebookUserClient(object):
-    def __init__(self, person, auth_token, client_id, secret_key,
+    def __init__(self, person, auth_token, client_id, secret_key):
         self._client = facebook.GraphAPI(access_token=auth_token)
         self._client_id = client_id
         self._secret_key = secret_key
