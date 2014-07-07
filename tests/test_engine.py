@@ -29,7 +29,7 @@ class TestSkyClient(unittest.TestCase):
     TEST_CLIENT_ID = "000000000"
     TEST_SECRET_KEY = "111111111"
 
-    @mock.patch("engine.face_client.FaceClient")
+    @mock.patch("payback.engine.face_client.FaceClient")
     def setUp(self):
         self.client = engine.SkyClient(self.TEST_CLIENT_ID,
                                        self.TEST_SECRET_KEY)
