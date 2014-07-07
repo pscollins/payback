@@ -328,7 +328,7 @@ class SkyClient(object):
         # TODO: also a "train" parameter here that's not documented
         # TODO: we should probably care about SkyBio's 'threshold'
 
-        sky_resp = self._recognize_for_person(person, url=urls)
+        sky_resp = self._recognize_for_person(person, urls=urls)
 
         tids = self._find_tids_for_facebook(person,
                                             original_photos,

@@ -223,7 +223,7 @@ class TestSkyClient(unittest.TestCase):
         self.client.train_for_facebook(self.person, original_photos)
 
         self.client._recognize_for_person.assert_called_once_with(
-            self.person, url="1,2,3")
+            self.person, urls="1,2,3")
         self.client._find_tids_for_facebook.assert_called_once_with(
             self.person, original_photos, "some response")
         self.assertFalse(self.client._train_person_on_tids.called)
