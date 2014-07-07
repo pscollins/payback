@@ -12,7 +12,7 @@ from PIL import Image
 from engine import engine
 from photos_response import TEST_RESPONSE
 from photos_for_tags import SMALL_PHOTO, VALID_SMALL_PHOTO
-from utils.easylogger import log_at, LOG
+from payback.utils.easylogger import log_at, LOG
 
 
 
@@ -159,7 +159,7 @@ class TestTaggedPhoto(unittest.TestCase):
     #     self._test_person_found()
     #     self._test_person_not_found()
 
-    @mock.patch("service.models.Person.objects")
+    @mock.patch("payback.service.models.Person.objects")
     def _build_test_photo(self, mocked_person_objects, photo_json=TEST_PHOTO):
         mocked_person_objects.return_value.\
             first.return_value = service.models.Person(**TEST_PERSON_INFO)
@@ -176,7 +176,7 @@ class TestTaggedPhoto(unittest.TestCase):
         self.assertEqual(tags[0].x, 33.33)
         self.assertEqual(tags[0].y, 66.66)
 
-    @mock.patch("service.models.Person.objects")
+    @mock.patch("payback.service.models.Person.objects")
     def test_person_not_found(self, mocked_person_objects):
         mocked_person_objects.return_value.first.return_value = None
 
@@ -189,7 +189,7 @@ class TestTaggedPhoto(unittest.TestCase):
         self.assertEqual(tags[0].x, 33.33)
         self.assertEqual(tags[0].y, 66.66)
 
-    @mock.patch("service.models.Person.objects")
+    @mock.patch("payback.service.models.Person.objects")
     def test_person_no_position(self, mocked_person_objects):
         mocked_person_objects.return_value.first.return_value = None
         tagged_photo = engine.TaggedPhoto.from_fb_resp(self.TEST_PHOTO)
