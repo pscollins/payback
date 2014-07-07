@@ -190,8 +190,9 @@ class SkyClient(object):
     MIN_CONF = 5
 
     def __init__(self, client_id=SB_CLIENT_ID,
-                 secret_key=SB_SECRET_KEY):
-        self.client = face_client.FaceClient(client_id, secret_key)
+                 secret_key=SB_SECRET_KEY,
+                 face_client_constructor=face_client.FaceClient):
+        self.client = face_client_constructor(client_id, secret_key)
 
     # this is their format for whatever reason
     def _qualify(self, ident):

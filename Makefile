@@ -10,4 +10,4 @@ start-env:
 test:
 	. ./activate
 	coverage run --branch tests/test_engine.py
-	coverage report --omit=venv/*,engine/facebook*
+	coverage report --omit=venv/*,engine/facebook*,tests/*

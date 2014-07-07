@@ -9,7 +9,7 @@ import os.path
 
 from PIL import Image
 
-from engine import engine
+from payback.engine import engine
 from photos_response import TEST_RESPONSE
 from photos_for_tags import SMALL_PHOTO, VALID_SMALL_PHOTO
 from payback.utils.easylogger import log_at, LOG
@@ -29,20 +29,51 @@ class TestSkyClient(unittest.TestCase):
     TEST_CLIENT_ID = "000000000"
     TEST_SECRET_KEY = "111111111"
 
-    @mock.patch("payback.engine.face_client.FaceClient")
-    def setUp(self):
+    TEST_NAMESPACE = "TESTNS"
+
+    @mock.patch("payback.engine.engine.face_client.FaceClient")
+    def setUp(self, mock_face_client):
         self.client = engine.SkyClient(self.TEST_CLIENT_ID,
-                                       self.TEST_SECRET_KEY)
+                                       self.TEST_SECRET_KEY,
+                                       mock_face_client)
+        self.client.NAMESPACE = self.TEST_NAMESPACE
+        mock_face_client.assert_called_once_with(self.TEST_CLIENT_ID,
+                                                 self.TEST_SECRET_KEY)
+
+        # this is okay because we don't save() the person
+        self.person = service.models.Person(**TEST_PERSON_INFO)
+
 
     def tearDown(self):
         self.client.client.reset_mock()
 
     def test_init(self):
-        self.client.client.assert_called_once_with(self.TEST_CLIENT_ID,
-                                                   self.TEST_SECRET_KEY)
+        pass
 
     def test__qualify(self):
-        pass
+        TO_QUALIFY = "foobar"
+
+        self.assertEqual("foobar@TESTNS",
+                         self.client._qualify(TO_QUALIFY))
+
+    def test__unqualify(self):
+        TO_UNQUALIFY = "foobar@bazbat"
+
+        self.assertEqual("foobar",
+                         self.client._unqualify(TO_UNQUALIFY))
+
+    def test__train_person_on_tids(self):
+        tids = ["1", "1", "2", "3"]
+
+        self.client._train_person_on_tids(self.person, tids)
+
+        self.client.client.tags_save.assert_called_once_with(
+            tids="1,3,2",
+            uid="blahblah@TESTNS",
+            label="Foo Bar")
+        self.client.client.faces_train.assert_called_once_with(
+            "blahblah@TESTNS")
+
 
 
 class TestFacebookUserClient(unittest.TestCase):
