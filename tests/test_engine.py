@@ -42,7 +42,7 @@ class TestSkyClient(unittest.TestCase):
                                                    self.TEST_SECRET_KEY)
 
     def test__qualify(self):
-
+        pass
 
 
 class TestFacebookUserClient(unittest.TestCase):

@@ -8,11 +8,13 @@ WTForms==1.0.5
 Werkzeug==0.9.6
 argparse==1.2.1
 astroid==1.1.1
+coverage==3.7.1
 flask-mongoengine==0.7.0
 httplib2==0.9
 ipython==2.1.0
 itsdangerous==0.24
 logilab-common==0.61.0
+mock==1.0.1
 mongoengine==0.8.7
 paypalrestsdk==1.1.0
 pylint==1.2.1

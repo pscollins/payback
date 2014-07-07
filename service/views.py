@@ -5,12 +5,13 @@ from flask import request, render_template, make_response, redirect, url_for,\
     flash
 from flask.ext.login import login_user, logout_user, current_user,\
     login_required
-from utils import easylogger
-import service.app #import app, login_manager
+from payback.utils import easylogger
+
+from payback.service.app import app, login_manager
 # from engine.engine import TwilioClient, VenmoClient,\
 #     TwilReq, SkyClient, FacebookUserClientBuilder, TaggedPhoto
-from engine import engine
-from models import Person, Bill
+from payback.engine import engine
+from payback.service.models import Person, Bill
 
 
 LOG = easylogger.LOG
@@ -24,12 +25,12 @@ fb_builder = engine.FacebookUserClientBuilder()
 DEBUG = True
 
 # set up login manager
-@service.app.login_manager.user_loader
+@app.login_manager.user_loader
 def load_user(phone_number):
     return Person.objects(number=phone_number).first()
 
 
-@service.app.route("/proc_file", methods=["GET", "POST"])
+@app.route("/proc_file", methods=["GET", "POST"])
 @login_required
 def proc_file():
     add_training_imgs(request, current_user)
@@ -94,12 +95,12 @@ def apply_bill_for(request_, amount_str):
                                                  users_to_bill])))
     return len(users_to_bill)
 
-@service.app.route("/mobile", methods=["GET"])
+@app.route("/mobile", methods=["GET"])
 @login_required
 def render_simple_upload():
     return render_template("simple_upload.html")
 
-@service.app.route("/mobile_upload", methods=["POST"])
+@app.route("/mobile_upload", methods=["POST"])
 @login_required
 def apply_uploaded_file():
     LOG.debug("forwarding request: ", request)
@@ -112,7 +113,7 @@ def apply_uploaded_file():
 
     return redirect(url_for('profile'))
 
-@service.app.route("/", methods=["GET"])
+@app.route("/", methods=["GET"])
 def render_login():
     if current_user.is_authenticated():
         return redirect(url_for('profile'))
@@ -120,7 +121,7 @@ def render_login():
     return render_template("index.html",
                            register_url=venmo.get_auth_url())
 
-@service.app.route("/text_recv", methods=["GET"])
+@app.route("/text_recv", methods=["GET"])
 def receive_text():
     params = request.args
     LOG.debug("got request: ", request)
@@ -165,13 +166,13 @@ def create_new(person):
     return redirect(url_for('register_new'))
 
 
-@service.app.route("/register_new", methods=["GET"])
+@app.route("/register_new", methods=["GET"])
 @login_required
 def register_new():
     return render_template("register_new.html")
 
 
-@service.app.route("/facebook_signup", methods=["POST"])
+@app.route("/facebook_signup", methods=["POST"])
 @login_required
 def facebook_signup():
     add_training_imgs(request, current_user)
@@ -179,7 +180,7 @@ def facebook_signup():
     # Not sure what scope we want here
     return render_template("facebook_signup.html")
 
-@service.app.route("/process_facebook_signup", methods=["GET"])
+@app.route("/process_facebook_signup", methods=["GET"])
 @login_required
 def process_facebook_signup():
     # NOW WE LEARN THEIR MOST RECENT PICTURES,
@@ -200,7 +201,7 @@ def process_facebook_signup():
     return redirect(url_for("profile"))
 
 
-@service.app.route("/code_recv", methods=["GET"])
+@app.route("/code_recv", methods=["GET"])
 def process_venmo_code():
     '''
     Use the code given to us by the Venmo authentication to see if
@@ -218,7 +219,7 @@ def process_venmo_code():
         return create_new(new_person)
 
 
-@service.app.route('/logout')
+@app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('render_login'))
@@ -229,7 +230,7 @@ def logout():
 #     return Person.objects(number=usernum)[0]
 
 
-@service.app.route("/profile", methods=["GET", "POST"])
+@app.route("/profile", methods=["GET", "POST"])
 @login_required
 def profile():
     if request.method == "POST":
@@ -246,4 +247,4 @@ def profile():
 
 
 if __name__ == "__main__":
-    service.app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0')
