@@ -434,8 +434,8 @@ class TaggedPhoto(object):
     @classmethod
     def from_skybio_resp(cls, skybio_resp, pil=None):
         # We have two different kinds of uids running around here -- that's bad
-        url = skybio_resp["url"]
-        tags = []
+        # url = skybio_resp["url"]
+        # tags = []
         raise NotImplementedError
 
 
@@ -458,10 +458,23 @@ class TaggedPhoto(object):
             crop_width_px = self.CROP_PORTION_WIDTH * width_px
             crop_height_px = self.CROP_PORTION_HEIGHT * height_px
 
+            LOG.debug("image width:", width_px)
+            LOG.debug("image height:", height_px)
+
+            LOG.debug("crop width: ", crop_width_px)
+            LOG.debug("crop height: ", crop_height_px)
+
+
             ret = []
             for tag in self.tags:
-                abs_x = tag.x * width_px
-                abs_y = tag.y * height_px
+                # .x and .y are percentage offsets
+                abs_x = (tag.x / 100) * width_px
+                abs_y = (tag.y / 100) * height_px
+
+                LOG.debug("tag: ", tag)
+                LOG.debug("abs_x:", abs_x)
+                LOG.debug("abs_y:", abs_y)
+
                 to_crop = (abs_x - crop_width_px, abs_y - crop_height_px,
                            abs_x + crop_width_px, abs_y - crop_height_px)
 

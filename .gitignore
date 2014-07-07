@@ -63,6 +63,7 @@ models/*/*/*.jpg
 models/*/*.jpg
 engine/Pictures/*/*.jpg
 engine/Pictures/*.png
+tests/test_cutouts
 
 # Config
 engine/engine_cfg.py

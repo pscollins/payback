@@ -15,18 +15,17 @@ SMALL_PHOTO = r'''{
       "tags": {
         "data": [
           {
-            "id": "10202658245962264",
+            "id": "12345",
             "name": "Patrick Collins",
             "created_time": "2014-06-29T22:00:36+0000",
             "x": 33.33,
             "y": 66.66
           },
           {
-            "id": "10202658245962264",
+            "id": "6789",
             "name": "Foo Bar",
-            "created_time": "2014-06-29T22:00:36+0000",
+            "created_time": "2014-06-29T22:00:36+0000"
           }
-
         ],
         "paging": {
           "cursors": {
@@ -45,4 +44,31 @@ SMALL_PHOTO = r'''{
           }
         }
       }
-    }'''
+    }
+'''
+
+# Some weirdness trying to use relative paths here, so you need to run
+# the test via "make test" to load this right.
+VALID_SMALL_PHOTO = {
+    'location': 'tests/test_photo.jpg',
+    'facebook_json':  r'''
+    {
+      "source": "my_picture_url",
+      "height": 720,
+      "width": 720,
+      "images": [
+      ],
+      "tags": {
+        "data": [
+          {
+            "id": "12345",
+            "name": "Patrick Collins",
+            "created_time": "2014-06-29T22:00:36+0000",
+            "x": 33.333335876465,
+            "y": 58.911109924316
+          }
+        ]
+      }
+    }
+    '''
+}
