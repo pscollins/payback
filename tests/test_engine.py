@@ -78,6 +78,21 @@ class TestFacebookUserClient(unittest.TestCase):
         self.fb_client._client.reset_mock()
         self.test_person.reset_mock()
 
+    @mock.patch("engine.facebook.GraphAPI", **MOCK_GRAPH_API_FOR_INIT)
+    def test_builder(self, mock_graph_api):
+        builder = engine.FacebookUserClientBuilder(self.TEST_CLIENT_ID,
+                                                   self.TEST_SECRET_KEY,
+                                                   mock_graph_api)
+
+        client = builder.client_for_person(self.test_person,
+                                           self.TEST_ACCESS_TOKEN)
+
+        for attr in ['_client_id', '_secret_key']:
+            self.assertEqual(getattr(client, attr),
+                             getattr(self.fb_client, attr))
+
+        # Can't test the _person because it's a mock
+
     def test_init(self):
         self.fb_client._person.save.assert_called_once_with()
 
@@ -206,7 +221,7 @@ class TestTaggedPhoto(unittest.TestCase):
 
     def test_face_cutouts(self):
         OUTDIR = "test_cutouts"
-        OUTPATH = os.path.join(OUTDIR, "1.jpg")
+        OUTPATH = os.path.join("tests", OUTDIR, "1.jpg")
 
         photo_json = json.loads(VALID_SMALL_PHOTO['facebook_json'])
         tagged_photo = self._build_test_photo(photo_json=photo_json)

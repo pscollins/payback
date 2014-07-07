@@ -260,15 +260,29 @@ class SkyClient(object):
         except ValueError:
             pass
 
-    def train_for_facebook(self, person, original_photos):
-        urls = ",".join([photo.url for photo in original_photos])
-        # TOOD: what's "aggressive"? Do we want that?
-        # TODO: also a "train" parameter here that's not documented
-        # TODO: we should probably care about SkyBio's 'threshold'
-
+    def _recognize_for_person(self, person, **kwargs):
         qualified_person = self._qualify(person.number)
-        resp = self.client.faces_recognize(self._qualify(person.number),
-                                           urls=urls)
+        return self.client.faces_recognize(self._qualify(person.number),
+                                           **kwargs)
+
+    def _update_possible_tags(self, possible_tags, tag, person, original):
+        uid, confidence = self._find_best_uid_from_tag_json(tag)
+
+        photo_tag = (uid == self._qualify(person.number)) and \
+                    PhotoTag(person.number,
+                             tag['center']['x'],
+                             tag['center']['y'])
+
+        LOG.debug("Checking if tags match. photo_tag: ", photo_tag)
+        LOG.debug("orignal.tags: ", original.tags)
+
+        if original.tag_matches(photo_tag):
+            possible_tags.append(ConfidentTag(photo_tag,
+                                              confidence,
+                                              tag['tid']))
+
+
+    def _find_tids_for_facebook(self, person, original_photos, resp):
         tids = []
         for photo in resp['photos']:
             original = self._find_matching_original(original_photos,
@@ -277,21 +291,25 @@ class SkyClient(object):
             for tag in [tag for tag in photo['tags'] if tag['uids']]:
                 LOG.debug("processing tag: ", tag)
                 # Not sure if we ever have more than one uid here
-                uid, confidence = self._find_best_uid_from_tag_json(tag)
-                photo_tag = (uid == qualified_person) and \
-                            PhotoTag(person.number,
-                                     tag['center']['x'],
-                                     tag['center']['y'])
-                LOG.debug("Checking if tags match. photo_tag: ", photo_tag)
-                LOG.debug("orignal.tags: ", original.tags)
-                if original.tag_matches(photo_tag):
-                    possible_tags.append(ConfidentTag(photo_tag,
-                                                      confidence,
-                                                      tag['tid']))
 
-                LOG.debug("Got possible tags: ", possible_tags)
-                self._update_tids(tids, possible_tags)
+                self._update_possible_tags(possible_tags, tag, person, original)
 
+            LOG.debug("Got possible tags: ", possible_tags)
+            self._update_tids(tids, possible_tags)
+
+
+    def train_for_facebook(self, person, original_photos):
+        urls = ",".join([photo.url for photo in original_photos])
+        # TOOD: what's "aggressive"? Do we want that?
+        # TODO: also a "train" parameter here that's not documented
+        # TODO: we should probably care about SkyBio's 'threshold'
+
+        sky_resp = self._recognize_for_person(person, url=urls)
+
+        tids = self._find_tids_for_facebook(self,
+                                            person,
+                                            original_photos,
+                                            sky_resp)
         LOG.debug("found tids: ", tids)
 
         if tids:
@@ -327,13 +345,18 @@ class SkyClient(object):
 
 
 class FacebookUserClientBuilder(object):
-    def __init__(self, client_id=FB_CLIENT_ID, secret_key=FB_SECRET_KEY):
+    def __init__(self, client_id=FB_CLIENT_ID,
+                 secret_key=FB_SECRET_KEY,
+                 graph_api_constructor=facebook.GraphAPI):
         self._client_id = client_id
         self._secret_key = secret_key
+        self._graph_api_constructor = graph_api_constructor
 
     def client_for_person(self, person, exchange_token):
-        return FacebookUserClient(person, exchange_token, self._client_id,
-                                  self._secret_key)
+        return FacebookUserClient(person, exchange_token,
+                                  self._client_id,
+                                  self._secret_key,
+                                  self._graph_api_constructor)
 
 
 class FacebookUserClient(object):
@@ -475,8 +498,11 @@ class TaggedPhoto(object):
                 LOG.debug("abs_x:", abs_x)
                 LOG.debug("abs_y:", abs_y)
 
-                to_crop = (abs_x - crop_width_px, abs_y - crop_height_px,
-                           abs_x + crop_width_px, abs_y - crop_height_px)
+                # Errors if it hits floats
+                to_crop = (int(abs_x - crop_width_px),
+                           int(abs_y - crop_height_px),
+                           int(abs_x + crop_width_px),
+                           int(abs_y + crop_height_px))
 
                 ret.append(self.pil.crop(to_crop))
 
