@@ -69,7 +69,7 @@ class EasyLogger(object):
         return getattr(self.logger, name)
 
 
-LOGGING_FMT = "<%(filename)s:%(lineno)s(%(levelname)s) - %(funcName)s() >"\
+LOGGING_FMT = "<%(filename)s:%(lineno)s(%(levelname)s) - %(funcName)s()> "\
                         "%(message)s"
 logging.basicConfig(level=logging.DEBUG, format=LOGGING_FMT)
 

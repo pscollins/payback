@@ -13,7 +13,7 @@ from payback.engine import engine
 from photos_response import TEST_RESPONSE
 from photos_for_tags import SMALL_PHOTO, VALID_SMALL_PHOTO
 from payback.utils.easylogger import log_at, LOG
-
+from skybio_responses import FACES_DETECT_TAG, FACES_DETECT_NO_TAGS
 
 
 mock_models = mock.create_autospec(service.models)
@@ -43,9 +43,10 @@ class TestSkyClient(unittest.TestCase):
         # this is okay because we don't save() the person
         self.person = service.models.Person(**TEST_PERSON_INFO)
 
-
     def tearDown(self):
         self.client.client.reset_mock()
+
+        FACES_DETECT_NO_TAGS['photos'][0]['tags'] = []
 
     def test_init(self):
         pass
@@ -74,6 +75,57 @@ class TestSkyClient(unittest.TestCase):
         self.client.client.faces_train.assert_called_once_with(
             "blahblah@TESTNS")
 
+
+    def test_train_for_user_fails(self):
+        response = FACES_DETECT_NO_TAGS
+        self.client.client.faces_detect.return_value = response
+
+        with self.assertRaises(engine.TooFewFacesError):
+            self.client.train_for_user(self.person, ['not an image'])
+
+        response['photos'][0]['tags'] = [FACES_DETECT_TAG, FACES_DETECT_TAG]
+        # LOG.debug("new response:", response)
+        # self.client.client.faces_detect.return_value = response
+
+        with self.assertRaises(engine.TooManyFacesError):
+            self.client.train_for_user(self.person, ['not an image'])
+
+
+    def test__get_tids_to_train_for_user(self):
+        response = FACES_DETECT_NO_TAGS
+        response['photos'][0]['tags'] = [FACES_DETECT_TAG]
+
+        self.client.client.faces_detect.return_value = response
+
+        tids = self.client._get_tids_to_train_for_user(
+            ['not an image', 'still not an image'])
+
+        self.assertEqual(tids, ['test_tid', 'test_tid'])
+
+    def test_train_for_user_passes(self):
+        response = FACES_DETECT_NO_TAGS
+        response['photos'][0]['tags'] = [FACES_DETECT_TAG]
+
+        self.client.client.faces_detect.return_value = response
+
+        self.client._train_person_on_tids = mock.MagicMock()
+
+        self.client.train_for_user(self.person, ['not an image'])
+
+        self.client._train_person_on_tids.assert_called_once_with(
+            self.person, ['test_tid'])
+
+    def test__find_matching_original(self):
+        originals = [
+            engine.TaggedPhoto("abc"),
+            engine.TaggedPhoto("123")
+        ]
+
+        with self.assertRaises(engine.UnrecognizedUserError):
+            self.client._find_matching_original(originals, "def")
+
+        self.assertEqual(self.client._find_matching_original(originals, "abc"),
+                         originals[0])
 
 
 class TestFacebookUserClient(unittest.TestCase):

@@ -23,6 +23,9 @@ class SkyBiometryError(Exception):
 class TooManyFacesError(SkyBiometryError):
     pass
 
+class TooFewFacesError(SkyBiometryError):
+    pass
+
 class UnrecognizedUserError(SkyBiometryError):
     pass
 # TEMP
@@ -214,11 +217,7 @@ class SkyClient(object):
         # LONG RUNNING!! and asynchronous
         self.client.faces_train(self._qualify(person.number))
 
-    # match on person.number b/c unique
-    def train_for_user(self, person, *images):
-        LOG.debug("Sending to faces_detect")
-        LOG.debug("Got images: ", images)
-
+    def _get_tids_to_train_for_user(self, images):
         resps = [self.client.faces_detect(file=im) for im in images]
 
         LOG.debug("Got responses: ", resps)
@@ -230,10 +229,23 @@ class SkyClient(object):
 
         for resp in resps:
             for photo in resp['photos']:
-                if len(photo['tags']) != 1:
+                num_tags = len(photo['tags'])
+                if num_tags == 0:
+                    raise TooFewFacesError
+                elif num_tags > 1:
                     raise TooManyFacesError
                 else:
                     tids.append(photo['tags'][0]['tid'])
+
+        return tids
+
+
+    # match on person.number b/c unique
+    def train_for_user(self, person, *images):
+        LOG.debug("Sending to faces_detect")
+        LOG.debug("Got images: ", images)
+
+        tids = self._get_tids_to_train_for_user(images)
 
         LOG.debug("found tids: ", tids)
         LOG.debug("saving tags")
@@ -241,6 +253,7 @@ class SkyClient(object):
 
     @staticmethod
     def _find_matching_original(original_photos, url):
+        # TODO: the name of this exception doesn't make sense
         try:
             return [photo for photo in original_photos
                     if photo.url == url][0]
