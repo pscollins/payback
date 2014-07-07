@@ -1,13 +1,49 @@
 import logging
 import functools
+import os
+import sys
 
-class EasyLogger:
+def set_srcfile():
+    if hasattr(sys, 'frozen'): #support for py2exe
+        _srcfile = "logging%s__init__%s" % (os.sep, __file__[-4:])
+    elif (__file__[-4:]).lower() in ['.pyc', '.pyo']:
+        _srcfile = __file__[:-4] + '.py'
+    else:
+        _srcfile = __file__
+    _srcfile = os.path.normcase(_srcfile)
+
+    return _srcfile
+
+# http://stackoverflow.com/questions/4957858/ Ugly, ugly hack. I'm
+# sorry.
+# We have no self here because it seems not to be passed to
+# the monkeypatched method
+def find_caller_monkeypatch():
+    """
+    Find the stack frame of the caller so that we can note the source
+    file name, line number and function name.
+    """
+    f = logging.currentframe().f_back
+    rv = "(unknown file)", 0, "(unknown function)"
+    while hasattr(f, "f_code"):
+        co = f.f_code
+        filename = os.path.normcase(co.co_filename)
+        if filename in (set_srcfile(), logging._srcfile): # This line is modified.
+            f = f.f_back
+            continue
+        rv = (filename, f.f_lineno, co.co_name)
+        break
+    return rv
+
+class EasyLogger(object):
     # OVERRIDDEN = ['critical', 'error', 'warning', 'info', 'debug']
     # this gets angry in 2.7
     SEP = " "
 
     def __init__(self, logger=logging.getLogger(__name__)):
         self.logger = logger
+        # Ugly, ugly, ugly dirty hack to fix line numbers
+        self.logger.findCaller = find_caller_monkeypatch
 
     def _format_str(self, *args):
         return self.SEP.join([str(a) for a in args])

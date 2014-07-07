@@ -1,10 +1,13 @@
 import unittest
 import mock
 import json
+import service.models
+import logging
 
 from engine import engine
 from photos_response import TEST_RESPONSE
-import service.models
+from utils.easylogger import log_at
+
 
 mock_models = mock.create_autospec(service.models)
 
@@ -84,9 +87,15 @@ class TestFacebookUserClient(unittest.TestCase):
         self.assertEqual(self.fb_client._person.fb_id,
                          "6666666666666666")
 
-
+    @log_at(logging.INFO)
     def test_get_photos(self):
         test_resp = json.loads(TEST_RESPONSE)
+        self.fb_client._client.request.return_value = test_resp
+
+        r_lim1 = self.fb_client.get_photos(1)
+        r_lim2 = self.fb_client.get_photos(2)
+        r_lim3 = self.fb_client.get_photos(3)
+
 
 
 def main():
