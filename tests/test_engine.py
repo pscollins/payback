@@ -6,6 +6,7 @@ import logging
 
 from engine import engine
 from photos_response import TEST_RESPONSE
+from photos_for_tags import SMALL_PHOTO
 from utils.easylogger import log_at
 
 
@@ -62,10 +63,10 @@ class TestFacebookUserClient(unittest.TestCase):
         self.test_person = mock_models.Person(**self.TEST_PERSON_INFO)
 
         self.fb_client = engine.FacebookUserClient(self.test_person,
-                                              self.TEST_ACCESS_TOKEN,
-                                              self.TEST_CLIENT_ID,
-                                              self.TEST_SECRET_KEY,
-                                              mock_graph_api)
+                                                   self.TEST_ACCESS_TOKEN,
+                                                   self.TEST_CLIENT_ID,
+                                                   self.TEST_SECRET_KEY,
+                                                   mock_graph_api)
 
         self.addCleanup(self.fb_client._client.reset_mock)
 
@@ -96,6 +97,52 @@ class TestFacebookUserClient(unittest.TestCase):
         r_lim2 = self.fb_client.get_photos(2)
         r_lim3 = self.fb_client.get_photos(3)
 
+        # We test the "meat" of the responses in TaggedPhoto, so let's
+        # not worry about them here.
+        self.assertEqual(len(r_lim1), 1)
+        self.assertEqual(len(r_lim2), 2)
+        self.assertEqual(len(r_lim3), 3)
+
+
+    def test_get_friends(self):
+        pass
+
+
+class TestTaggedPhoto(unittest.TestCase):
+    # TEST_PHOTOS = json.loads(photos_response.TEST_RESPONSE)['data']
+    TEST_PHOTO = json.loads(SMALL_PHOTO)
+
+    def test_from_fb_resp(self):
+        # self._test_tag_no_person()
+        self._test_person_found()
+        self._test_person_not_found()
+
+    @mock.patch.object("engine.Person.objects")
+    def _test_person_found(self, mocked_person_objects):
+        mocked_person_objects.return_value.first.return_value = "5555555555"
+        tagged_photo = engine.TaggedPhoto.from_fb_resp(self.TEST_PHOTO)
+
+        self.assertEqual(tagged_photo.url, "my_picture_url")
+        tags = tagged_photo.tags
+
+        self.assertEqual(len(tags), 1)
+        self.assertEqual(tags[0].number, "5555555555")
+        self.assertEqual(tags[0].x, 33.33)
+        self.assertEqual(tags[0].y, 66.66)
+
+    @mock.patch.object("engine.Person.objects")
+    def _test_person_not_found(self, mocked_person_objects):
+        mocked_person_objects.return_value.first.return_value = None
+
+        tagged_photo = engine.TaggedPhoto.from_fb_resp(self.TEST_PHOTO)
+
+        self.assertEqual(tagged_photo.url, "my_picture_url")
+        tags = tagged_photo.tags
+
+        self.assertEqual(len(tags), 1)
+        self.assertEqual(tags[0].number, "5555555555")
+        self.assertEqual(tags[0].x, 33.33)
+        self.assertEqual(tags[0].y, 66.66)
 
 
 def main():
