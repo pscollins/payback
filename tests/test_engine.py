@@ -3,7 +3,7 @@ import mock
 import json
 
 from engine import engine
-from test_photos_response import TEST_RESPONSE
+from photos_response import TEST_RESPONSE
 import service.models
 
 mock_models = mock.create_autospec(service.models)
@@ -89,9 +89,9 @@ class TestFacebookUserClient(unittest.TestCase):
         test_resp = json.loads(TEST_RESPONSE)
 
 
-
-
+def main():
+    unittest.main()
 
 
 if __name__ == '__main__':
-    unittest.main()
+    main()
