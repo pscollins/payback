@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# pylint: disable=no-init
 # from service import app, db
 from service.app import db
 

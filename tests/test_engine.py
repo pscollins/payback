@@ -1,3 +1,5 @@
+#pylint: disable=protected-access
+
 import unittest
 import mock
 import json
@@ -21,6 +23,27 @@ TEST_PERSON_INFO = {
     "number": "blahblah",
     "vm_auth_token": "foobar"
 }
+
+
+class TestSkyClient(unittest.TestCase):
+    TEST_CLIENT_ID = "000000000"
+    TEST_SECRET_KEY = "111111111"
+
+    @mock.patch("engine.face_client.FaceClient")
+    def setUp(self):
+        self.client = engine.SkyClient(self.TEST_CLIENT_ID,
+                                       self.TEST_SECRET_KEY)
+
+    def tearDown(self):
+        self.client.client.reset_mock()
+
+    def test_init(self):
+        self.client.client.assert_called_once_with(self.TEST_CLIENT_ID,
+                                                   self.TEST_SECRET_KEY)
+
+    def test__qualify(self):
+
+
 
 class TestFacebookUserClient(unittest.TestCase):
     TEST_CLIENT_ID = "000000000"

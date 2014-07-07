@@ -1,3 +1,4 @@
+# pylint: skip-file
 TEST_RESPONSE = r'''{
   "data": [
     {

@@ -9,7 +9,7 @@ from utils import easylogger
 import service.app #import app, login_manager
 # from engine.engine import TwilioClient, VenmoClient,\
 #     TwilReq, SkyClient, FacebookUserClientBuilder, TaggedPhoto
-import engine
+from engine import engine
 from models import Person, Bill
 
 
@@ -24,7 +24,7 @@ fb_builder = engine.FacebookUserClientBuilder()
 DEBUG = True
 
 # set up login manager
-@login_manager.user_loader
+@service.app.login_manager.user_loader
 def load_user(phone_number):
     return Person.objects(number=phone_number).first()
 
@@ -125,7 +125,7 @@ def receive_text():
     params = request.args
     LOG.debug("got request: ", request)
     LOG.debug("request.args: ", request.args)
-    twilreq = TwilReq(params.get("From").strip("+"), params.get("Body"))
+    twilreq = engine.TwilReq(params.get("From").strip("+"), params.get("Body"))
 
     person_billed, bills = twilio.process_twilreq(twilreq)
 

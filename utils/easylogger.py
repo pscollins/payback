@@ -14,11 +14,12 @@ def set_srcfile():
 
     return _srcfile
 
-# http://stackoverflow.com/questions/4957858/ Ugly, ugly hack. I'm
-# sorry.
+# http://stackoverflow.com/questions/4957858/
+# Ugly, ugly hack. I'm  sorry.
 # We have no self here because it seems not to be passed to
-# the monkeypatched method
+# the monkeypatched method.
 def find_caller_monkeypatch():
+    # pylint: disable=invalid-name, protected-access
     """
     Find the stack frame of the caller so that we can note the source
     file name, line number and function name.
@@ -28,7 +29,8 @@ def find_caller_monkeypatch():
     while hasattr(f, "f_code"):
         co = f.f_code
         filename = os.path.normcase(co.co_filename)
-        if filename in (set_srcfile(), logging._srcfile): # This line is modified.
+        # This line is modified.
+        if filename in (set_srcfile(), logging._srcfile):
             f = f.f_back
             continue
         rv = (filename, f.f_lineno, co.co_name)
@@ -57,7 +59,7 @@ class EasyLogger(object):
     def warning(self, *args):
         self.logger.warning(self._format_str(*args))
 
-    def error(self,  *args):
+    def error(self, *args):
         self.logger.error(self._format_str(*args))
 
     def critical(self, *args):
@@ -77,13 +79,13 @@ LOG = EasyLogger()
 
 
 def log_at(new_level=logging.ERROR, logger=LOG):
-    def wrap(f):
-        @functools.wraps(f)
-        def wrapped_f(*args, **kwargs):
+    def wrap(func):
+        @functools.wraps(func)
+        def wrapped_func(*args, **kwargs):
             old_level = logger.level
             logger.setLevel(new_level)
-            to_ret = f(*args, **kwargs)
+            to_ret = func(*args, **kwargs)
             logger.setLevel(old_level)
             return to_ret
-        return wrapped_f
+        return wrapped_func
     return wrap

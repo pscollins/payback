@@ -14,6 +14,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+# pylint: skip-file
+
 """Python client library for the Facebook Platform.
 
 This client library is designed to support the Graph API and the

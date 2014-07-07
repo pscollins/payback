@@ -306,8 +306,7 @@ class SkyClient(object):
 
         sky_resp = self._recognize_for_person(person, url=urls)
 
-        tids = self._find_tids_for_facebook(self,
-                                            person,
+        tids = self._find_tids_for_facebook(person,
                                             original_photos,
                                             sky_resp)
         LOG.debug("found tids: ", tids)
@@ -405,12 +404,8 @@ class FacebookUserClient(object):
     def get_friends(self):
         raise NotImplementedError
 
-# TODO: No clue what unit "x" and "y" are in. Seems to be "percentage
-# distance from upper right corner of image." Also not clear if this
-# is the center of the face, edge, or what.
-
-# BUT whatever they are, it looks like they match up with Sky Biometry
-# -- they appear to be centers of tagged areas.
+# .x and .y appear to correspond to the percentage position of the
+# center of the face.
 
 PhotoTag = collections.namedtuple("PhotoTag", ["number", "x", "y",])
 ConfidentTag = collections.namedtuple("ConfidentTag", ["tag",
@@ -444,10 +439,10 @@ class TaggedPhoto(object):
         for resp in fb_resp['tags']['data']:
             # This will be None if no person is in our db
             try:
-                 person = Person.objects(fb_id=resp['id']).first()
-                 number = person.number if person else None
-                 tags.append(PhotoTag(number, float(resp["x"]),
-                                      float(resp["y"])))
+                person = Person.objects(fb_id=resp['id']).first()
+                number = person.number if person else None
+                tags.append(PhotoTag(number, float(resp["x"]),
+                                     float(resp["y"])))
             except KeyError:
                  pass
 

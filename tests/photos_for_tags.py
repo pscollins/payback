@@ -1,3 +1,4 @@
+# pylint: skip-file
 SMALL_PHOTO = r'''{
       "id": "293721707474968",
       "from": {
