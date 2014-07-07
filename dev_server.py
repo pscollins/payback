@@ -2,8 +2,8 @@
 
 # pylint: disable=unused-import
 
-from payback.service.app import app
+from payback.service import app
 import payback.service.views
 
 
-app.run(host='0.0.0.0', debug=True)
+app.app.run(host='0.0.0.0', debug=True)
