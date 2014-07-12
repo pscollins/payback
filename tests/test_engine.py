@@ -1,4 +1,4 @@
-#pylint: disable=protected-access
+#pylint: disable=protected-access,method-hidden
 
 import unittest
 import mock
@@ -396,6 +396,40 @@ class TestTaggedPhoto(unittest.TestCase):
 
         self.assertEqual(len(tags), 1)
 
+    def test_from_skybio_resp(self):
+        test_resp = copy.deepcopy(FACES_RECOGNIZE_NO_TAGS)
+
+        def build_correct_tags_for_loc(x, y):
+            return [engine.PhotoTag("confident", x, y),
+                    engine.PhotoTag("unconfident", x, y)]
+
+        tag1 = copy.deepcopy(FACES_RECOGNIZE_TAG)
+        tag2 = copy.deepcopy(FACES_RECOGNIZE_TAG)
+
+        tag1['center']['x'] = 10.0
+        tag1['center']['y'] = 15.0
+
+        tag2['center']['x'] = 5.0
+        tag2['center']['y'] = 6.0
+
+        tag1['uids'] = [UNCONFIDENT_UID, CONFIDENT_UID]
+        tag2['uids'] = [CONFIDENT_UID, UNCONFIDENT_UID]
+
+        test_resp['photos'][0]['tags'] = [tag1, tag2]
+
+        to_test = engine.TaggedPhoto.from_skybio_resp(test_resp['photos'][0])
+
+        self.assertEqual(len(to_test.tags), 4)
+        self.assertEqual(to_test.url,"testing_url")
+
+        LOG.debug("to_test.tags: ", to_test.tags)
+
+        self.assertEqual(to_test.tags[:2],
+                         build_correct_tags_for_loc(10.0, 15.0))
+        self.assertEqual(to_test.tags[2:],
+                         build_correct_tags_for_loc(5.0, 6.0))
+
+
     def test_tag_matches(self):
         tagged_photo = self._build_test_photo()
 
@@ -461,6 +495,53 @@ class TestTaggedPhoto(unittest.TestCase):
 
         LOG.info("Saved the test image in", OUTPATH, ". "
                  "You should open it to make sure that it looks okay.")
+
+class TestTaggedUsers(unittest.TestCase):
+    TEST_LIST = [
+        engine.PhotoTag("5", 5, 5),
+        engine.PhotoTag("55", 5, 5),
+        engine.PhotoTag("6", 6, 6),
+        engine.PhotoTag("66", 6, 6)
+    ]
+
+    TEST_PHOTO = engine.TaggedPhoto("foo", TEST_LIST, None)
+
+    def _build_from_taggedphoto(self):
+        to_test = engine.TaggedUsers.from_taggedphoto(self.TEST_PHOTO)
+
+        return to_test
+
+    def test_from_taggedphoto(self):
+        to_test = self._build_from_taggedphoto()
+
+        self.assertEqual(to_test._tag_map[(5, 5)],
+                         self.TEST_LIST[:2])
+        self.assertEqual(to_test._tag_map[(6, 6)],
+                         self.TEST_LIST[2:])
+
+        dummy_tags = [engine.PhotoTag(None, 5, 5), engine.PhotoTag(None, 6, 6)]
+        self.assertEqual(to_test._dummy_photo.tags, dummy_tags)
+        self.assertEqual(to_test._dummy_photo.url, "foo")
+
+    def test_get_cutouts_and_users(self):
+        # Not testing the cutouts themselves here because that's done
+        # elsewhere. It would be good to check that they're paired
+        # with the right user, but I'm not going to right now.
+
+        users = self._build_from_taggedphoto()
+        users._dummy_photo = mock.MagicMock(autospec=True)
+        users._dummy_photo.get_face_cutouts.return_value = [1, 2]
+
+        to_test = users.get_cutouts_and_users()
+
+        users._dummy_photo.get_face_cutouts.assert_called_once_with()
+
+        self.assertEqual(len(to_test), 2)
+        self.assertEqual(to_test[0],
+                         (1, self.TEST_LIST[:2]))
+        self.assertEqual(to_test[1],
+                         (2, self.TEST_LIST[2:]))
+
 
 def main():
     unittest.main()

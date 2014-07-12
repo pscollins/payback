@@ -2,6 +2,7 @@
 import collections
 import requests
 import face_client
+import itertools
 
 from twilio.rest import TwilioRestClient
 from PIL import Image
@@ -348,7 +349,9 @@ class SkyClient(object):
                                            file=image,
                                            namespace=self.NAMESPACE)
 
-        tagged_photo = TaggedPhoto.from_skybio_resp(resp, pil=Image.open(image))
+        this_photo = resp['photos'][0]
+
+        tagged_photo = TaggedPhoto.from_skybio_resp(this_photo, pil=Image.open(image))
 
     def find_user_numbers_in(self, image):
         resp = self.client.faces_recognize("all",
@@ -443,6 +446,39 @@ ConfidentTag = collections.namedtuple("ConfidentTag", ["tag",
                                                        "confidence",
                                                        "tid"])
 
+class TaggedUsers(object):
+    def __init__(self, tag_map, photo=None):
+        self._tag_map = tag_map
+        self._dummy_photo = photo
+
+
+    @classmethod
+    def from_taggedphoto(cls, taggedphoto):
+        tag_list = taggedphoto.tags
+        tag_map = {location:list(users) for location, users in
+                   itertools.groupby(tag_list, key=lambda tag: (tag.x, tag.y))}
+
+        # Ugly, I'm sorry.
+        dummy_tags = [PhotoTag(None, key[0], key[1]) for key in sorted(tag_map)]
+        dummy_photo = TaggedPhoto(taggedphoto.url, dummy_tags, taggedphoto.pil)
+
+        return cls(tag_map, dummy_photo)
+
+    def get_cutouts_and_users(self):
+        # Note that we rely on the *ordering* of the tags in
+        # dummy_tags here. Specifically, we assume that the tags are
+        # ordered from left-to-right so that we match them with people
+        # correctly when we zip them together. This should be okay
+        # because we're the ones who set up dummy_photo.
+
+        # Also, if we want this to work as it should (ordered by
+        # confidence), we need to do that when we build the initial
+        # TaggedPhoto
+        cutouts = self._dummy_photo.get_face_cutouts()
+        people = [people for place, people in sorted(self._tag_map.items())]
+        return zip(cutouts, people)
+
+
 class TaggedPhoto(object):
     # NOTE THAT WE AREN'T GOING THROUGH ANY OF THIS "PAGING" BULLSHIT
     # AND THAT MIGHT FUCK US UP
@@ -483,9 +519,29 @@ class TaggedPhoto(object):
     @classmethod
     def from_skybio_resp(cls, skybio_resp, pil=None):
         # We have two different kinds of uids running around here -- that's bad
-        # url = skybio_resp["url"]
-        # tags = []
-        raise NotImplementedError
+
+        url = skybio_resp["url"]
+        phototags = []
+
+        for tag in skybio_resp['tags']:
+            LOG.debug("processing tag: ", tag)
+
+            x = float(tag['center']['x'])
+            y = float(tag['center']['y'])
+
+            # We need to order the tags by confidence when we drop
+            # them in, or else they'll come out wrong when we display
+            # them for 'confirmation'
+
+            for uid in sorted(tag['uids'],
+                              key=lambda el: el['confidence'],
+                              reverse=True):
+                number = SkyClient._unqualify(uid['uid'])
+                phototags.append(PhotoTag(number, x, y))
+
+        photo = TaggedPhoto(url, phototags, pil)
+
+        return photo
 
 
     def tag_matches(self, tag):
