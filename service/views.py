@@ -114,7 +114,7 @@ def serve_image(identifier):
     # this is DEFINITELY DEFINITELY DEFINITELY A SECURITY RISK AND
     # SOMETHING NEEDS TO BE DONE TO FIX IT later on
     if upload_manager.image_exists(identifier):
-        path = upload_manager.path_from_file_hash(identifier)
+        path = upload_manager.path_from_hash_for_send_file(identifier)
         LOG.debug("trying to send file. Path: ", path)
 
         return send_file(path)
