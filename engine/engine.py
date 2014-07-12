@@ -605,7 +605,7 @@ class TaggedPhoto(object):
             return ret
 
 class FileUploadManager(object):
-    UPLOAD_DIR = os.path.join("..", "uploads")
+    UPLOAD_DIR = os.path.join(".", "uploads")
     MAX_SIZE_MB = 2
     IMG_FMT = "{}.jpg"
 
