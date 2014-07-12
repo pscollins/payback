@@ -114,9 +114,11 @@ def serve_image(identifier):
     # this is DEFINITELY DEFINITELY DEFINITELY A SECURITY RISK AND
     # SOMETHING NEEDS TO BE DONE TO FIX IT later on
     if upload_manager.image_exists(identifier):
+        LOG.debug("trying to send file")
         return send_from_directory(upload_manager.upload_dir,
                                    identifier)
     else:
+        LOG.debug('aborting')
         abort(404)
 
 @app.route("/confirm_bill", methods=["POST"])
