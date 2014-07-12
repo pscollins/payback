@@ -125,8 +125,6 @@ def confirm_bill():
     file_ = request.files.get("to_ident")
     amount = amount_str_to_float(request.form.get("amount"))
 
-    assert len(file_) == 1
-
     taggedphoto = sky.taggedphoto_from_image(file_)
     users = engine.TaggedUsers.from_taggedphoto(taggedphoto)
     default_amount = amount / users.count()
