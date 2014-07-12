@@ -23,9 +23,7 @@ upload_manager = engine.FileUploadManager()
 # class InvalidFileError(Exception):
 #     status_code = 400
 
-UPLOAD_DIR
-
-DEBUG = True
+DEBUG = False
 
 # set up login manager
 @app.login_manager.user_loader
@@ -55,7 +53,7 @@ def add_training_imgs(request_, user):
 
     return "SUCCESS"
 
-def amount_str_to_float(self, amount_str):
+def amount_str_to_float(amount_str):
     try:
         return float(amount_str)
     except ValueError:
@@ -132,7 +130,7 @@ def confirm_bill():
     taggedphoto = sky.taggedphoto_from_image(file_)
     users = engine.TaggedUsers.from_taggedphoto(taggedphoto)
     default_amount = amount / users.count()
-    cutout_paths_and_user_names = []
+    cutout_paths_and_users = []
 
     for cutout, users in users.get_cutouts_and_users():
         cutout_path = upload_manager.build_temp_file(cutout)

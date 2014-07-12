@@ -51,18 +51,18 @@ class TestSkyClient(unittest.TestCase):
         self.client.client.reset_mock()
 
     @log_at(logging.INFO)
-    def test__qualify(self):
+    def test_qualify(self):
         TO_QUALIFY = "foobar"
 
         self.assertEqual("foobar@TESTNS",
-                         self.client._qualify(TO_QUALIFY))
+                         self.client.qualify(TO_QUALIFY))
 
     @log_at(logging.INFO)
-    def test__unqualify(self):
+    def test_unqualify(self):
         TO_UNQUALIFY = "foobar@bazbat"
 
         self.assertEqual("foobar",
-                         self.client._unqualify(TO_UNQUALIFY))
+                         self.client.unqualify(TO_UNQUALIFY))
 
     @log_at(logging.INFO)
     def test__train_person_on_tids(self):

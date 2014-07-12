@@ -203,11 +203,11 @@ class SkyClient(object):
         self.client = face_client_constructor(client_id, secret_key)
 
     # this is their format for whatever reason
-    def _qualify(self, ident):
+    def qualify(self, ident):
         return "{}@{}".format(ident, self.NAMESPACE)
 
     @staticmethod
-    def _unqualify(ident):
+    def unqualify(ident):
         return ident.split("@")[0]
 
     def _train_person_on_tids(self, person, tids):
@@ -215,12 +215,12 @@ class SkyClient(object):
         no_duplicates = set(tids)
         LOG.debug("dupes removed: ", no_duplicates)
         self.client.tags_save(tids=",".join(no_duplicates),
-                              uid=self._qualify(person.number),
+                              uid=self.qualify(person.number),
                               label=person.name)
 
         LOG.debug("Training....")
         # LONG RUNNING!! and asynchronous
-        self.client.faces_train(self._qualify(person.number))
+        self.client.faces_train(self.qualify(person.number))
 
     def _get_tids_to_train_for_user(self, images):
         resps = [self.client.faces_detect(file=im) for im in images]
@@ -283,14 +283,14 @@ class SkyClient(object):
             pass
 
     def _recognize_for_person(self, person, **kwargs):
-        qualified_person = self._qualify(person.number)
-        return self.client.faces_recognize(self._qualify(person.number),
+        qualified_person = self.qualify(person.number)
+        return self.client.faces_recognize(self.qualify(person.number),
                                            **kwargs)
 
     def _update_possible_tags(self, possible_tags, tag, person, original):
         uid, confidence = self._find_best_uid_from_tag_json(tag)
 
-        photo_tag = (uid == self._qualify(person.number)) and \
+        photo_tag = (uid == self.qualify(person.number)) and \
                     PhotoTag(person.number,
                              tag['center']['x'],
                              tag['center']['y'])
@@ -353,7 +353,8 @@ class SkyClient(object):
 
         this_photo = resp['photos'][0]
 
-        taggedphoto = TaggedPhoto.from_skybio_resp(this_photo, pil=Image.open(image))
+        taggedphoto = TaggedPhoto.from_skybio_resp(this_photo,
+                                                   pil=Image.open(image))
 
         return taggedphoto
 
@@ -374,7 +375,7 @@ class SkyClient(object):
                 candidate = max(tag['uids'],
                                 key=lambda x: x['confidence'])
                 if candidate['confidence'] >= self.MIN_CONF:
-                    to_return.append(self._unqualify(candidate['uid']))
+                    to_return.append(self.unqualify(candidate['uid']))
 
         LOG.debug("got user phone numbers: ", to_return)
 
@@ -481,6 +482,9 @@ class TaggedUsers(object):
         # Also, if we want this to work as it should (ordered by
         # confidence), we need to do that when we build the initial
         # TaggedPhoto
+
+        # THIS IS NOT A GOOD NAME FOR THIS BECAUSE WE REALLY JUST
+        # RETURN THE PHONE NUMBER
         cutouts = self._dummy_photo.get_face_cutouts()
         people = [people for place, people in sorted(self._tag_map.items())]
         return zip(cutouts, people)
@@ -543,7 +547,7 @@ class TaggedPhoto(object):
             for uid in sorted(tag['uids'],
                               key=lambda el: el['confidence'],
                               reverse=True):
-                number = SkyClient._unqualify(uid['uid'])
+                number = SkyClient.unqualify(uid['uid'])
                 phototags.append(PhotoTag(number, x, y))
 
         photo = TaggedPhoto(url, phototags, pil)
