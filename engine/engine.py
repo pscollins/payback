@@ -630,7 +630,11 @@ class FileUploadManager(object):
 
         LOG.debug("checking path: ", path)
 
-        return os.path.isfile(path)
+        ret = os.path.isfile(path)
+
+        LOG.debug("file exists?: ", ret)
+
+        return ret
 
     def path_from_file_hash(self, hashed_image):
         return self._build_path(hashed_image)
