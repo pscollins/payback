@@ -607,6 +607,10 @@ class TestFileUploadManager(unittest.TestCase):
         self.assertEqual(self.manager.build_filename('foo'),
                          'foo.jpg')
 
+    def test_path_from_hash_for_send_file(self):
+        to_test = self.manager.path_from_hash_for_send_file("foo")
+        self.assertEqual(to_test, ".././tests/test_uploads/foo.jpg")
+
 
 def main():
     unittest.main()

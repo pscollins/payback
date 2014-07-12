@@ -613,8 +613,9 @@ class FileUploadManager(object):
         self.upload_dir = upload_dir
         self._max_size_mb = max_size_mb
 
-    def _build_path(self, img_name):
-        return self.IMG_FMT.format(os.path.join(self.upload_dir, img_name))
+    def _build_path(self, img_name, upload_dir=None):
+        upload_dir = upload_dir or self.upload_dir
+        return self.IMG_FMT.format(os.path.join(upload_dir, img_name))
 
     def build_filename(self, hashed_image):
         return self.IMG_FMT.format(hashed_image)
@@ -639,5 +640,6 @@ class FileUploadManager(object):
 
         return ret
 
-    def path_from_file_hash(self, hashed_image):
-        return self._build_path(hashed_image)
+    def path_from_hash_for_send_file(self, hashed_image):
+        upload_dir = os.path.join("..", self.upload_dir)
+        return self._build_path(hashed_image, upload_dir=upload_dir)
