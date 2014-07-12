@@ -490,6 +490,10 @@ class TaggedUsers(object):
         # RETURN THE PHONE NUMBER
         cutouts = self._dummy_photo.get_face_cutouts()
         people = [people for place, people in sorted(self._tag_map.items())]
+
+        LOG.debug("had tag_map: ", self._tag_map)
+        LOG.debug("got people: ", people)
+
         return zip(cutouts, people)
 
 

@@ -134,8 +134,6 @@ def confirm_bill():
 
     users = engine.TaggedUsers.from_taggedphoto(taggedphoto)
 
-    LOG.debug("got users phone numbers: ", users._tag_map)
-
     default_amount = amount / (users.count() or 1)
 
     cutout_paths_and_users = []
