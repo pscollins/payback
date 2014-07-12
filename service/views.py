@@ -127,7 +127,9 @@ def confirm_bill():
 
     taggedphoto = sky.taggedphoto_from_image(file_)
     users = engine.TaggedUsers.from_taggedphoto(taggedphoto)
-    default_amount = amount / users.count()
+
+    default_amount = amount / (users.count() or 1)
+
     cutout_paths_and_users = []
 
     for cutout, users in users.get_cutouts_and_users():
