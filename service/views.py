@@ -122,7 +122,7 @@ def serve_image(identifier):
 @app.route("/confirm_bill", methods=["POST"])
 @login_required
 def confirm_bill():
-    file_ = request.files.get("set")
+    file_ = request.files.get("to_ident")
     amount = amount_str_to_float(request.form.get("amount"))
 
     assert len(file_) == 1
