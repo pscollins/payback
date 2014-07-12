@@ -603,6 +603,9 @@ class TestFileUploadManager(unittest.TestCase):
 
         os.remove(TEST_PATH)
 
+    def test_build_filename(self):
+        self.assertEqual(self.manager.build_filename('foo'),
+                         'foo.jpg')
 
 
 def main():

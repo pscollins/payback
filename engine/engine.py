@@ -616,6 +616,9 @@ class FileUploadManager(object):
     def _build_path(self, img_name):
         return self.IMG_FMT.format(os.path.join(self.upload_dir, img_name))
 
+    def build_filename(self, hashed_image):
+        return self.IMG_FMT.format(hashed_image)
+
     def resize_to_max(self, image):
         raise NotImplementedError
 
