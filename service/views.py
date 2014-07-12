@@ -129,7 +129,12 @@ def confirm_bill():
     amount = amount_str_to_float(request.form.get("amount"))
 
     taggedphoto = sky.taggedphoto_from_image(file_)
+
+    LOG.debug("got tags: ", taggedphoto.tags)
+
     users = engine.TaggedUsers.from_taggedphoto(taggedphoto)
+
+    LOG.debug("got users phone numbers: ", users)
 
     default_amount = amount / (users.count() or 1)
 
