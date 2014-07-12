@@ -5,13 +5,13 @@ from flask import request, render_template, make_response, redirect, url_for,\
     flash
 from flask.ext.login import login_user, logout_user, current_user,\
     login_required
-from payback.utils import easylogger
+from utils import easylogger
 
-from payback.service.app import app, login_manager
+from service import app, login_manager
 # from engine.engine import TwilioClient, VenmoClient,\
 #     TwilReq, SkyClient, FacebookUserClientBuilder, TaggedPhoto
-from payback.engine import engine
-from payback.service.models import Person, Bill
+from engine import engine
+from models import Person, Bill
 
 
 LOG = easylogger.LOG

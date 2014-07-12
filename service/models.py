@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # pylint: disable=no-init, too-few-public-methods
 # from service import app, db
-from payback.service.app import db
+from service import db
 
 from flask.ext.login import UserMixin
 

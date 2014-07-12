@@ -68,5 +68,8 @@ tests/test_cutouts
 # HTML Coverage Reports
 htmlcov/
 
-# Config
+# Credentials
 engine/engine_cfg.py
+
+# Logs
+nohup.out
