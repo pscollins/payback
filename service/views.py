@@ -119,7 +119,7 @@ def serve_image(identifier):
     else:
         abort(404)
 
-@app.route("/confirm_bill", methods=["GET"])
+@app.route("/confirm_bill", methods=["POST"])
 @login_required
 def confirm_bill():
     file_ = request.files.get("set")
