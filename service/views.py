@@ -2,7 +2,7 @@ import logging
 # import requests
 
 from flask import request, render_template, make_response, redirect, url_for,\
-    flash, send_from_directory, abort
+    flash, send_file, abort
 from flask.ext.login import login_user, logout_user, current_user,\
     login_required
 from payback.utils import easylogger
@@ -114,9 +114,10 @@ def serve_image(identifier):
     # this is DEFINITELY DEFINITELY DEFINITELY A SECURITY RISK AND
     # SOMETHING NEEDS TO BE DONE TO FIX IT later on
     if upload_manager.image_exists(identifier):
-        LOG.debug("trying to send file")
-        return send_from_directory(upload_manager.upload_dir,
-                                   identifier)
+        path = upload_manager.path_from_file_hash(identifier)
+        LOG.debug("trying to send file. Path: ", path)
+
+        return send_file(path)
     else:
         LOG.debug('aborting')
         abort(404)
