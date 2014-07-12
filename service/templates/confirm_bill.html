@@ -17,8 +17,7 @@ amount that each should be billed.</p>
 		 <th> Amount to Pay </th>
 	   </thead>
 	   <tbody>
-		 {% for index, (cutout_path, users) in
-         enumerate(cutout_paths_and_users) %}
+		 {% for index, (cutout_path, users) in index_cutout_paths_and_users %}
          <tr>
            <td> <img src="{{ "/images/{}".format(cutout_path) }}"> </img> </td>
            <td>
