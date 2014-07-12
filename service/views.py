@@ -141,7 +141,7 @@ def confirm_bill():
 
         cutout_paths_and_users.append((cutout_path, user_records))
 
-    render_template("confirm_bill.html",
+    return render_template("confirm_bill.html",
                     index_cutout_paths_and_users=enumerate(cutout_paths_and_users),
                     default_amount=default_amount)
 
