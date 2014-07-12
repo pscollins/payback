@@ -195,12 +195,16 @@ class TestSkyClient(unittest.TestCase):
             return_value={'photos':["foo"]}, autospec=True)
         mock_image.open.return_value = "not a pil"
 
-        self.client.taggedphoto_from_image("not an image")
+        mock_file = mock.MagicMock(autospec=file)
 
+        self.client.taggedphoto_from_image(mock_file)
 
         self.client.client.faces_recognize.assert_called_once_with(
-            "all", file="not an image", namespace=self.client.NAMESPACE)
-        mock_image.open.assert_called_once_with("not an image")
+            "all", file=mock_file, namespace=self.client.NAMESPACE)
+
+        mock_image.open.assert_called_with(mock_file)
+        mock_file.seek.assert_called_once_with(0)
+
         mock_taggedphoto.from_skybio_resp.assert_called_once_with(
             "foo", pil="not a pil")
 

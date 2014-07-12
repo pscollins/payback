@@ -353,6 +353,9 @@ class SkyClient(object):
 
         this_photo = resp['photos'][0]
 
+        # need to "rewind" to open up the PIL.Image of this
+        image.seek(0)
+
         taggedphoto = TaggedPhoto.from_skybio_resp(this_photo,
                                                    pil=Image.open(image))
 
