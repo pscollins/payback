@@ -2,7 +2,7 @@ import logging
 # import requests
 
 from flask import request, render_template, make_response, redirect, url_for,\
-    flash
+    flash, send_from_directory, abort
 from flask.ext.login import login_user, logout_user, current_user,\
     login_required
 from payback.utils import easylogger
@@ -19,8 +19,11 @@ twilio = engine.TwilioClient()
 venmo = engine.VenmoClient()
 sky = engine.SkyClient()
 fb_builder = engine.FacebookUserClientBuilder()
+upload_manager = engine.FileUploadManager()
 # class InvalidFileError(Exception):
 #     status_code = 400
+
+UPLOAD_DIR
 
 DEBUG = True
 
@@ -52,6 +55,11 @@ def add_training_imgs(request_, user):
 
     return "SUCCESS"
 
+def amount_str_to_float(self, amount_str):
+    try:
+        return float(amount_str)
+    except ValueError:
+        return 0.0
 
 def apply_bill_for(request_, amount_str):
     files_dict = request_.files
@@ -69,10 +77,12 @@ def apply_bill_for(request_, amount_str):
     users_to_bill = [Person.objects(number=num)[0]
                      for num in nums_to_bill]
 
-    try:
-        amount = float(amount_str)
-    except ValueError:
-        amount = 0.0
+    # try:
+    #     amount = float(amount_str)
+    # except ValueError:
+    #     amount = 0.0
+
+    amount = amount_str_to_float(amount_str)
 
     # me = user_from_cookies(request.cookies)
     if len(users_to_bill) == 0:
@@ -99,6 +109,46 @@ def apply_bill_for(request_, amount_str):
 @login_required
 def render_simple_upload():
     return render_template("simple_upload.html")
+
+@app.route("/images/<identifier>", methods=["GET"])
+@login_required
+def serve_image(identifier):
+    # this is DEFINITELY DEFINITELY DEFINITELY A SECURITY RISK AND
+    # SOMETHING NEEDS TO BE DONE TO FIX IT later on
+    if upload_manager.image_exists(identifier):
+        return send_from_directory(upload_manager.upload_dir,
+                                   identifier)
+    else:
+        abort(404)
+
+@app.route("/confirm_bill", methods=["GET"])
+@login_required
+def confirm_bill():
+    file_ = request.files.get("set")
+    amount = amount_str_to_float(request.form.get("amount"))
+
+    assert len(file_) == 1
+
+    taggedphoto = sky.taggedphoto_from_image(file_)
+    users = engine.TaggedUsers.from_taggedphoto(taggedphoto)
+    default_amount = amount / users.count()
+    cutout_paths_and_user_names = []
+
+    for cutout, users in users.get_cutouts_and_users():
+        cutout_path = upload_manager.build_temp_file(cutout)
+
+        user_records = []
+
+        # DO SOME ERROR HANDLING HERE LATER
+        for user in users:
+            user_records.append(Person.objects(number=user).first())
+
+        cutout_paths_and_users.append((cutout_path, user_records))
+
+    render_template("confirm_bill.html",
+                    cutout_paths_and_users=cutout_paths_and_users,
+                    default_amount=default_amount)
+
 
 @app.route("/mobile_upload", methods=["POST"])
 @login_required

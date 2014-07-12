@@ -3,6 +3,8 @@ import collections
 import requests
 import face_client
 import itertools
+import os
+import hashlib
 
 from twilio.rest import TwilioRestClient
 from PIL import Image
@@ -344,14 +346,16 @@ class SkyClient(object):
         else:
             LOG.debug("Didn't find any pictures to train on.")
 
-    def tagged_photo_from_image(self, image):
+    def taggedphoto_from_image(self, image):
         resp = self.client.faces_recognize("all",
                                            file=image,
                                            namespace=self.NAMESPACE)
 
         this_photo = resp['photos'][0]
 
-        tagged_photo = TaggedPhoto.from_skybio_resp(this_photo, pil=Image.open(image))
+        taggedphoto = TaggedPhoto.from_skybio_resp(this_photo, pil=Image.open(image))
+
+        return taggedphoto
 
     def find_user_numbers_in(self, image):
         resp = self.client.faces_recognize("all",
@@ -463,6 +467,9 @@ class TaggedUsers(object):
         dummy_photo = TaggedPhoto(taggedphoto.url, dummy_tags, taggedphoto.pil)
 
         return cls(tag_map, dummy_photo)
+
+    def count(self):
+        return len(self._tag_map)
 
     def get_cutouts_and_users(self):
         # Note that we rely on the *ordering* of the tags in
@@ -589,3 +596,30 @@ class TaggedPhoto(object):
                 ret.append(self.pil.crop(to_crop))
 
             return ret
+
+class FileUploadManager(object):
+    UPLOAD_DIR = os.path.join("..", "uploads")
+    MAX_SIZE_MB = 2
+    IMG_FORMAT = "{}.jpg"
+
+    def __init__(self, upload_dir=UPLOAD_DIR, max_size_mb=MAX_SIZE_MB):
+        self.upload_dir = upload_dir
+        self._max_size = max_size
+
+    def _build_path(self, img_name):
+        return self.IMG_FORMAT(os.path.join(self.upload_dir, img_name))
+
+    def resize_to_max(self, image):
+        raise NotImplementedError
+
+    def build_temp_file(self, image):
+        hashed_image = hashlib.md5(image.tostring())
+        image.save(self._build_path(hashed_image)).hexdigest()
+
+        return hashed_image
+
+    def image_exists(self, identifier):
+        return os.path.isfile(self._build_path(identifier))
+
+    def path_from_file_hash(self, hashed_image):
+        return self._build_path(hashed_image)

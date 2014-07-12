@@ -7,6 +7,7 @@ import service.models
 import logging
 import os.path
 import copy
+import hashlib
 
 from PIL import Image
 
@@ -186,6 +187,23 @@ class TestSkyClient(unittest.TestCase):
             engine.PhotoTag("blahblah", 64.75, 48.24),
             25,
             "testing_tid")])
+
+    @mock.patch("payback.engine.engine.Image", autospec=True)
+    @mock.patch("payback.engine.engine.TaggedPhoto", autospec=True)
+    def test_taggedphoto_from_image(self, mock_taggedphoto, mock_image):
+        self.client.client.faces_recognize = mock.MagicMock(
+            return_value={'photos':["foo"]}, autospec=True)
+        mock_image.open.return_value = "not a pil"
+
+        self.client.taggedphoto_from_image("not an image")
+
+
+        self.client.client.faces_recognize.assert_called_once_with(
+            "all", file="not an image", namespace=self.client.NAMESPACE)
+        mock_image.open.assert_called_once_with("not an image")
+        mock_taggedphoto.from_skybio_resp.assert_called_once_with(
+            "foo", pil="not a pil")
+
 
     def test__find_tids_for_facebook(self):
         resp = copy.deepcopy(FACES_RECOGNIZE_NO_TAGS)
@@ -541,6 +559,45 @@ class TestTaggedUsers(unittest.TestCase):
                          (1, self.TEST_LIST[:2]))
         self.assertEqual(to_test[1],
                          (2, self.TEST_LIST[2:]))
+
+    def test_count(self):
+        to_test = self._build_from_taggedphoto()
+        self.assertEqual(to_test.count(), 2)
+
+class TestFileUploadManager(unittest.TestCase):
+    TEST_IMAGE = Image.open(VALID_SMALL_PHOTO['location'])
+    TEST_HASH = hashlib.md5(TEST_IMAGE.tostring()).hexdigest()
+
+    def setUp(self):
+        self.manager = engine.FileUploadManager(upload_dir="./test_uploads")
+
+    def test_init(self):
+        self.assertEqual(self.manager.upload_dir, "./test_uploads")
+
+    def test__build_path(self):
+        # platform-specific, will break on windows
+        self.assertEqual(self.manager._build_path("foo"),
+                         "./test_uploads/foo.jpg")
+
+    def test_image_exists(self):
+        self.assertTrue(self.manager.image_exists("test_exists"))
+
+    def test_build_tempfile(self):
+        # will break on windows
+        TEST_PATH = "./test_uploads/{}.jpg".format(self.TEST_HASH)
+        LOG.debug("self.TEST_HASH: ", self.TEST_HASH)
+
+        if os.path.isfile(TEST_PATH):
+            os.rm(TEST_PATH)
+
+        to_test = self.manager.build_temp_file(self.TEST_IMAGE)
+
+        self.assertEqual(to_test, self.TEST_HASH)
+
+        self.assertTrue(os.path.isfile(TEST_PATH))
+
+        os.rm(TEST_PATH)
+
 
 
 def main():
