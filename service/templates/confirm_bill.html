@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% from "macro.html" import disable_uploader, multifile_upload %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+<p> Before we send your bill, please confirm the persons and the
+amount that each should be billed.</p>
+
+<form>
+<div class="table-responsive"
+	 <table class="table table-striped">
+	   <thead>
+		 <th> Photo of Person </th>
+		 <th> Person's Name </th>
+		 <th> Amount to Pay </th>
+	   </thead>
+	   <tbody>
+		 {% for index, (cutout_path, users) in
+         enumerate(cutout_paths_and_users) %}
+         <tr>
+           <td> <img src="{{ "/images/{}".format(cutout_path) }}"> </img> </td>
+           <td>
+             <select name="{{ "person{}".format(index) }}">
+
+               <option value="{{ users[0].number }}" selected>
+                 {{ users[0].name }}
+               </option>
+               {% for user in users[1:] %}
+               <option value="{{ user.number }}">
+                 {{ user.name }}
+               </option>
+               {% endfor %}
+               </select>
+           </td>
+           <td> <input type="text" name="{{ "amount{}".format(index) }}"
+                       value=default_amount>
+           </td>
+         </tr>
+         {% endfor %}
+       </tbody>
+	 </table>
+</div>
+
+<button type="submit" action="/apply_bill" class="btn btn-primary">
+  Submit bill
+</button>
+</form>
+
+{% endblock %}
+
+{% block script %}
+{% endblock %}

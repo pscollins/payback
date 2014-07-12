@@ -569,26 +569,27 @@ class TestFileUploadManager(unittest.TestCase):
     TEST_HASH = hashlib.md5(TEST_IMAGE.tostring()).hexdigest()
 
     def setUp(self):
-        self.manager = engine.FileUploadManager(upload_dir="./test_uploads")
+        self.manager = engine.FileUploadManager(
+            upload_dir="./tests/test_uploads")
 
     def test_init(self):
-        self.assertEqual(self.manager.upload_dir, "./test_uploads")
+        self.assertEqual(self.manager.upload_dir, "./tests/test_uploads")
 
     def test__build_path(self):
         # platform-specific, will break on windows
         self.assertEqual(self.manager._build_path("foo"),
-                         "./test_uploads/foo.jpg")
+                         "./tests/test_uploads/foo.jpg")
 
     def test_image_exists(self):
         self.assertTrue(self.manager.image_exists("test_exists"))
 
     def test_build_tempfile(self):
         # will break on windows
-        TEST_PATH = "./test_uploads/{}.jpg".format(self.TEST_HASH)
+        TEST_PATH = "./tests/test_uploads/{}.jpg".format(self.TEST_HASH)
         LOG.debug("self.TEST_HASH: ", self.TEST_HASH)
 
         if os.path.isfile(TEST_PATH):
-            os.rm(TEST_PATH)
+            os.remove(TEST_PATH)
 
         to_test = self.manager.build_temp_file(self.TEST_IMAGE)
 
@@ -596,7 +597,7 @@ class TestFileUploadManager(unittest.TestCase):
 
         self.assertTrue(os.path.isfile(TEST_PATH))
 
-        os.rm(TEST_PATH)
+        os.remove(TEST_PATH)
 
 
 

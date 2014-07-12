@@ -600,26 +600,30 @@ class TaggedPhoto(object):
 class FileUploadManager(object):
     UPLOAD_DIR = os.path.join("..", "uploads")
     MAX_SIZE_MB = 2
-    IMG_FORMAT = "{}.jpg"
+    IMG_FMT = "{}.jpg"
 
     def __init__(self, upload_dir=UPLOAD_DIR, max_size_mb=MAX_SIZE_MB):
         self.upload_dir = upload_dir
-        self._max_size = max_size
+        self._max_size_mb = max_size_mb
 
     def _build_path(self, img_name):
-        return self.IMG_FORMAT(os.path.join(self.upload_dir, img_name))
+        return self.IMG_FMT.format(os.path.join(self.upload_dir, img_name))
 
     def resize_to_max(self, image):
         raise NotImplementedError
 
     def build_temp_file(self, image):
-        hashed_image = hashlib.md5(image.tostring())
-        image.save(self._build_path(hashed_image)).hexdigest()
+        hashed_image = hashlib.md5(image.tostring()).hexdigest()
+        image.save(self._build_path(hashed_image))
 
         return hashed_image
 
     def image_exists(self, identifier):
-        return os.path.isfile(self._build_path(identifier))
+        path = self._build_path(identifier)
+
+        LOG.debug("checking path: ", path)
+
+        return os.path.isfile(path)
 
     def path_from_file_hash(self, hashed_image):
         return self._build_path(hashed_image)

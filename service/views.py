@@ -149,7 +149,12 @@ def confirm_bill():
                     cutout_paths_and_users=cutout_paths_and_users,
                     default_amount=default_amount)
 
+@app.route("/apply_bill", methods=["GET"])
+@login_required
+def apply_bill():
+    return "SUCCESS"
 
+# CURRENTLY *NOT* GETTING HIT
 @app.route("/mobile_upload", methods=["POST"])
 @login_required
 def apply_uploaded_file():
