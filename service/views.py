@@ -168,9 +168,9 @@ def apply_bill():
     users_billed = []
 
     for el in itertools.count(start=1):
-        try:
-            person_number = request.form.get("person|{}".format(el))
-        except KeyError:
+        person_number = request.form.get("person|{}".format(el))
+
+        if not person_number:
             break
 
         LOG.debug("got person_number: ", person_number)
