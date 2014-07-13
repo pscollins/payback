@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% from "macro.html" import outstanding_table %}
+
+<!-- <!DOCTYPE html>
+<html>
+<head>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes"> -->
+{% block head %}
+    <title> Outstanding Bills : PayBack</title>
+{% endblock %}
+
+{% block content %}
+<form action="/pay_outstanding" methods=["POST"]>
+<h1> Money owed to you </h1>
+{{ outstanding_table(bills_owed_to_you, False) }}
+
+<h1> Money you owe </h1>
+
+{{ outstanding_table(bills_you_owe, True) }}
+
+<button type="submit" class="btn btn-primary">
+  Submit action.
+</button>
+</form>
+
+{% endblock %}
+
+{% block script %}
+{% endblock %}
