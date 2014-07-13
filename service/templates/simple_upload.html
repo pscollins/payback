@@ -1,43 +1,43 @@
-<!DOCTYPE html>
+{% extends "base.html" %}
+{% from "macro.html" import disable_uploader %}
+
+<!-- <!DOCTYPE html>
 <html>
 <head>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
-
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes"> -->
+{% block head %}
     <title>New Bill : PayBack</title>
-
     <link rel="stylesheet" href="/css/normalize.css">
-    <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap.css" rel="stylesheet">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/css/bootstrap-theme.css">
-    <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.min.js"></script>
-</head>
+    <link rel="stylesheet" href="/css/file-up.css">
+{% endblock %}
 
-<body>
-  <div class="container">
-    <h1>New Bill : PayBack</h1>
-    <form action="/confirm_bill" method="post"
-	  enctype="multipart/form-data">
-      <div class="form-group">
-	<label for="file">Group Picture</label>
-	<input type="file" name="to_ident" id="file">
-      </div>
-      <div class="input-group">
-	<span class="input-group-addon">$</span>
-	<input class="form-control" id="amount" type="text" name="amount" placeholder="10.00">
-      </div>
-      <div class="input-group">
-	<button type="submit" class="btn btn-danger">Submit</button>
-      </div>
-    </form>
-  </div>
+{% block content %}
+    <div class="container">
+      <h1>New Bill : PayBack</h1>
+      <form action="/confirm_bill" method="post"
+	        enctype="multipart/form-data">
+        <div class="form-group">
+	      <label for="file">Group Picture</label>
+	      <input type="file" name="to_ident" id="file-selector">
+        </div>
+        <div class="input-group">
+	      <span class="input-group-addon">$</span>
+	      <input class="form-control" id="amount" type="text" name="amount" placeholder="10.00">
+        </div>
+        <div class="input-group">
+	      <button id="upload-button" type="submit" class="btn btn-danger">
+            Submit
+          </button>
+        </div>
+      </form>
+    </div>
+{% endblock %}
 
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.2.0/js/bootstrap.min.js"></script>
-
-</body>
-
-</html>
+{% block script %}
+{{ disable_uploader() }}
+{% endblock %}

@@ -172,6 +172,7 @@ def apply_bill():
 
         if not person_number:
             break
+        # we should do javascripty things here
         elif person_number == "noone":
             continue
 
