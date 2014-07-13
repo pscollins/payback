@@ -173,6 +173,8 @@ def apply_bill():
         except KeyError:
             break
 
+        LOG.debug("got person_number: ", person_number)
+
         amount = amount_str_to_float(request.form.get("amount|{}".format(el)))
         to_bill = Person.objects(number=person_number).first()
         # .id?????
