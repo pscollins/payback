@@ -1,94 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<title>Pay Back</title>
-	<meta charset="utf-8">
-	<meta name="author" content="pixelhint.com">
-	<meta name="description" content="Pay Back is a minimal, clean HTML5 multi-purpose template, well-coded & commented code"/>
-	<link rel="stylesheet" type="text/css" href="css/reset.css">
-	<link rel="stylesheet" type="text/css" href="css/main.css">
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script type="text/javascript" src="/js/main.js"></script>
-</head>
-<body>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/img/favicon.ico">
 
-	<header>
+    <title>PayBack</title>
 
-		<div class="wrapper">
-			<a href="#" class="logo"> <img src="img/logo.png" alt="" title="Minima"/> </a>
-			<nav>
-				<ul>
-					<li><a href="">How it Works</a></li>
-					<li><a href="">Our Team</a></li>
-					<li><a href="">Dashboard</a></li>
-					<li><a href="">Friends</a></li>
-					<li><a href="">Contact Us</a></li>
-				</ul>
-			</nav>
-		</div>
+    <!-- Bootstrap core CSS -->
+    <link href="/css/vendor/bootstrap.min.css" rel="stylesheet">
 
-	</header><!-- End Header -->
+    <!-- Custom styles for this template -->
+    <link href="/css/vendor/cover.css" rel="stylesheet">
 
-	<section class="billboard">
-		<section class="caption">
-			<p class="cap_title">Pay Back</p>
-			<p class="cap_desc">PAY YOUR FRIENDS BACK FOR COVERING DINNER WITH A SNAP OF A PHOTO</p>
-			<a href="{{ register_url }}">Login with Venmo<i></i></a>
-		</section>
-	</section><!-- End billboard -->
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="/js/vendor/ie10-viewport-bug-workaround.js"></script>
 
-	<section class="services wrapper">
-		<ul>
-			<li>
-				<img class="s_icons" src="img/s1_icon.png" title="" alt=""/>
-				<h3>SIMPLE</h3>
-				<p>Snap a picture of your table and everyone at your table gets a text to pay their portion of their bill.</p>
-			</li>
-			<li>
-				<img class="s_icons" src="img/s2_icon.png" title="" alt=""/>
-				<h3>FREE</h3>
-				<p>Sending money is completely free as long as you use a bank account, supported debit card, or Venmo balance to fund your payments. If you choose to use a credit card, there is a 3% fee.
-</p>
-			</li>
-			<li>
-				<img class="s_icons" src="img/s3_icon.png" title="" alt=""/>
-				<h3>SECURE</h3>
-				<p>bank-grade security systems and data encryption to protect you and prevent against any unauthorized transactions or access to your personal or financial information. Furthermore, we guarantee all user funds against any unauthorized transactions.</p>
-			</li>
-		</ul>
-	</section><!-- End services -->
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
 
+  <body>
 
+    <div class="site-wrapper">
 
+      <div class="site-wrapper-inner">
 
-	<section class="social">
-			<a href="http://facebook.com/pixelhint" target="_blank" class="fb"></a>
-			<a href="http://twitter.com/pixelhint" target="_blank" class="t"></a>
-			<a href="http://dribbble.com/pixelhint" target="_blank" class="d"></a>
-			<a href="#" target="_blank" class="g"></a>
-	</section><!-- End social -->
+        <div class="cover-container">
 
+          <div class="masthead clearfix">
+            <div class="inner">
+              <h3 class="masthead-brand">PayBack</h3>
+              <ul class="nav masthead-nav">
+                <li class="active"><a href="#">Home</a></li>
+                <li><a href="#">Features</a></li>
+                <li><a href="#">Contact</a></li>
+              </ul>
+            </div>
+          </div>
 
+          <div class="inner cover">
+            <h1 class="cover-heading">Pay your friends back.</h1>
+            <p class="lead">Snap a picture of your table. Everyone gets a text message to pay their portion of the bill. Reply. Done.</p>
+            <p class="lead">
+	      {% if current_user.is_authenticated() %}
+              <a href="{{ url_for('profile') }}" class="btn btn-lg btn-default">Go to dashboard</a>
+	      {% else %}
+              <a href="{{ register_url }}" class="btn btn-lg btn-default">Login with Venmo</a>
+	      {% endif %}
+            </p>
+          </div>
 
-	<footer>
-		<div class="wrapper">
-			<div class="f_cols">
-				<h3>Location</h3>
-				<p>1871, Merchandise Mart, Chicago, IL 60606 <span class="phone">(312) 123 1234</span></p>
-			</div>
+          <div class="mastfoot">
+            <div class="inner">
+              <p>2014 &copy; PayBack</p>
+            </div>
+          </div>
 
-			<div class="f_cols">
-				<h3>Company</h3>
-				<ul>
-					<li><a href="#">Team</a></li>
-				</ul>
-			</div>
+        </div>
 
-			<div class="f_cols">
-				<h3>Support</h3>
-				<ul>
-					<li><a href="#">Contact Us</a></li>
-				</ul>
-			</div>
+      </div>
 
-</body>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="/js/vendor/bootstrap.min.js"></script>
+    <script src="/js/vendor/docs.min.js"></script>
+  </body>
+</html>
