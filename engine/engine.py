@@ -296,7 +296,7 @@ class SkyClient(object):
 
     def _recognize_for_person(self, person, **kwargs):
         qualified_person = self.qualify(person.number)
-        return self.client.faces_recognize(self.qualify(person.number),
+        return self.client.faces_recognize(qualified_person,
                                            **kwargs)
 
     def _update_possible_tags(self, possible_tags, tag, person, original):
@@ -501,7 +501,7 @@ class TaggedUsers(object):
         # THIS IS NOT A GOOD NAME FOR THIS BECAUSE WE REALLY JUST
         # RETURN THE PHONE NUMBER
         cutouts = self._dummy_photo.get_face_cutouts()
-        people = [people for place, people in sorted(self._tag_map.items())]
+        people = [people for _, people in sorted(self._tag_map.items())]
 
         LOG.debug("had tag_map: ", self._tag_map)
         LOG.debug("got people: ", people)
