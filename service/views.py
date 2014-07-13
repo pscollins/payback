@@ -138,6 +138,7 @@ def confirm_bill():
 
     cutout_paths_and_users = []
 
+    # THESE ARE ACTUALLY TAGGEDPHOTOS, NOT USERS
     for cutout, users in users.get_cutouts_and_users():
         LOG.debug("cutout: ", cutout)
         LOG.debug("users: ", users)
@@ -147,7 +148,7 @@ def confirm_bill():
 
         # DO SOME ERROR HANDLING HERE LATER
         for user in users:
-            user_records.append(Person.objects(number=user).first())
+            user_records.append(Person.objects(number=user.number).first())
 
         cutout_paths_and_users.append((cutout_path, user_records))
 
