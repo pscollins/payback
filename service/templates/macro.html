@@ -71,7 +71,7 @@ window.fbAsyncInit = function() {
 
 
 {% macro outstanding_table(bills, can_be_paid) %}
-<form action="/pay_outstanding" method="post">
+<!-- <form action="/pay_outstanding" method="post"> -->
   <div class="table-responsive">
     <table class="table table-striped">
       <thead>
@@ -109,8 +109,5 @@ window.fbAsyncInit = function() {
       </tbody>
     </table>
   </div>
-  <button type="submit" class="btn btn-primary">
-    Submit action.
-  </button>
-</form>
+
 {% endmacro %}
