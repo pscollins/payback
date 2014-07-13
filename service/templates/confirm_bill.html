@@ -18,6 +18,8 @@ amount that each should be billed.</p>
 	   </thead>
 	   <tbody>
 		 {% for cutout_path, users in cutout_paths_and_users %}
+         DEBUG: {{ cutout_path }}
+         DEBUG: {{ users }}
          <tr>
            <td> <img src="{{ "/images/{}".format(cutout_path) }}"> </img> </td>
            <td>
