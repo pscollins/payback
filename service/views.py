@@ -131,7 +131,7 @@ def pay_outstanding():
             if action == "pay":
                 venmo.pay_bill(bill)
             if action == "cancel" or action == "pay":
-                people_concerned.append(bill.to)
+                people_concerned.append(bill.to.name)
                 bill.delete()
             else:
                 abort(404)
