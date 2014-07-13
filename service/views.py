@@ -115,6 +115,13 @@ def outstanding():
                            bills_you_owe=bills_you_owe,
                            bills_owed_to_you=bills_owed_to_you)
 
+@app.route("/pay_outstanding", methods=["POST"])
+@login_required
+def pay_outstanding():
+    LOG.debug("bills you want to pay:", request.form)
+
+    return "SUCCESS"
+
 @app.route("/mobile", methods=["GET"])
 @login_required
 def render_simple_upload():

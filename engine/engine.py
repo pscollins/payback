@@ -121,6 +121,9 @@ class VenmoClient(object):
         LOG.debug("req.url: ", req.url,
                   ", req.code: ", req.status_code)
 
+    def pay_bill(self, bill):
+        self.make_payment(bill.amount, bill.to, bill.from_)
+
 
 class TwilioClient(object):
     MSG_FMT = '''Hey {}!
