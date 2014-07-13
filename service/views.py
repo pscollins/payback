@@ -139,6 +139,8 @@ def confirm_bill():
     cutout_paths_and_users = []
 
     for cutout, users in users.get_cutouts_and_users():
+        LOG.debug("cutout: ", cutout)
+        LOG.debug("users: ", users)
         cutout_path = upload_manager.build_temp_file(cutout)
 
         user_records = []
