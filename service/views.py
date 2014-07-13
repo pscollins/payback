@@ -115,6 +115,14 @@ def outstanding():
                            bills_you_owe=bills_you_owe,
                            bills_owed_to_you=bills_owed_to_you)
 
+
+def find_not_me_name(bill):
+    if bill.to.name == current_user.name:
+        return bill.from_.name
+    else:
+        return bill.to.name
+
+
 @app.route("/pay_outstanding", methods=["POST"])
 @login_required
 def pay_outstanding():
@@ -131,7 +139,7 @@ def pay_outstanding():
             if action == "pay":
                 venmo.pay_bill(bill)
             if action == "cancel" or action == "pay":
-                people_concerned.append(bill.to.name)
+                people_concerned.append(find_not_me_name(bill))
                 bill.delete()
             else:
                 abort(404)
