@@ -2,7 +2,7 @@ import logging
 import itertools
 
 from flask import request, render_template, make_response, redirect, url_for,\
-    flash, send_file, abort
+    flash, send_file, abort, jsonify
 from flask.ext.login import login_user, logout_user, current_user,\
     login_required
 from payback.utils import easylogger
@@ -251,7 +251,7 @@ def apply_uploaded_file():
 # endpoint for mobile to hit
 @app.route("/venmo_auth_url", methods=["GET"])
 def venmo_auth_url():
-    return {"url": venmo.get_auth_url()}
+    return jsonify(auth_url=venmo.get_auth_url())
 
 @app.route("/", methods=["GET"])
 def render_login():
