@@ -157,7 +157,7 @@ def confirm_bill():
                            cutout_paths_and_users=cutout_paths_and_users,
                            default_amount=default_amount)
 
-@app.route("/apply_bill", methods=["GET"])
+@app.route("/apply_bill", methods=["POST"])
 @login_required
 def apply_bill():
     LOG.debug("got form: ", request.form)
