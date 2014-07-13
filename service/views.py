@@ -109,7 +109,7 @@ def flash_conf_message(users_billed):
 @login_required
 def outstanding():
     bills_you_owe = engine.find_bills_from(current_user.id)
-    bills_owed_to_you = engine.find_bills_(current_user.id)
+    bills_owed_to_you = engine.find_bills_to(current_user.id)
 
     return render_template("outstanding.html",
                            bills_you_owe=bills_you_owe,
