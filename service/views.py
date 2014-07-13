@@ -249,8 +249,8 @@ def apply_uploaded_file():
     return redirect(url_for('profile'))
 
 # endpoint for mobile to hit
-@app.route("/venmo_auth_url", methods=["GET"])
-return {"url": venmo.get_auth_url()}
+@app.route("/venmo_auth_url", methods=["GET"]):
+    return {"url": venmo.get_auth_url()}
 
 @app.route("/", methods=["GET"])
 def render_login():
