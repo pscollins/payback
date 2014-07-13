@@ -95,10 +95,10 @@ class VenmoClient(object):
     # Person * Person... -> void
     def make_payments(self, amount, to, *froms):
         for from_ in froms:
-            self._make_payment(amount, to, from_)
+            self.make_payment(amount, to, from_)
 
     # Person * Person -> void
-    def _make_payment(self, amount, to, from_):
+    def make_payment(self, amount, to, from_):
         to_send = "/".join([self.BASE_URL, "payments"])
 
         data = {

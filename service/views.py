@@ -1,5 +1,5 @@
 import logging
-# import requests
+import itertools
 
 from flask import request, render_template, make_response, redirect, url_for,\
     flash, send_file, abort
@@ -53,11 +53,11 @@ def add_training_imgs(request_, user):
 
     return "SUCCESS"
 
-def amount_str_to_float(amount_str):
+def amount_str_to_float(amount_str, default=0.0):
     try:
         return float(amount_str)
     except ValueError:
-        return 0.0
+        return default
 
 def apply_bill_for(request_, amount_str):
     files_dict = request_.files
@@ -99,9 +99,12 @@ def apply_bill_for(request_, amount_str):
         bill.save()
         twilio.send_auth_text(bill)
 
-    flash('Sent a bill to {}.'.format(", ".join([u.name for u in
-                                                 users_to_bill])))
     return len(users_to_bill)
+
+def flash_conf_message(users_billed):
+    flash('Sent a bill to {}.'.format(", ".join([u.name for u in
+                                                 users_billed])))
+
 
 @app.route("/mobile", methods=["GET"])
 @login_required
@@ -160,8 +163,29 @@ def confirm_bill():
 @app.route("/apply_bill", methods=["POST"])
 @login_required
 def apply_bill():
+    # This is probably a security risk.
     LOG.debug("got form: ", request.form)
-    return "SUCCESS"
+    users_billed = []
+
+    for el in itertools.count(start=1):
+        try:
+            person_number = request.form.get("person|{}".format(el))
+        except KeyError:
+            break
+
+        amount = amount_str_to_float(request.form.get("amount|{}".format(el)))
+        to_bill = Person.objects(number=person_number).first()
+        # .id?????
+        bill = Bill(to=current_user,
+                    from_=to_bill,
+                    amount=amount)
+        bill.save()
+        twilio.send_auth_text(bill)
+        users_billed.append(to_bill)
+
+    flash_conf_message(users_billed)
+
+    return redirect(url_for('profile'))
 
 # CURRENTLY *NOT* GETTING HIT
 @app.route("/mobile_upload", methods=["POST"])
