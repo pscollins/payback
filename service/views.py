@@ -160,6 +160,7 @@ def confirm_bill():
 @app.route("/apply_bill", methods=["GET"])
 @login_required
 def apply_bill():
+    LOG.debug("got form: ", request.form)
     return "SUCCESS"
 
 # CURRENTLY *NOT* GETTING HIT
