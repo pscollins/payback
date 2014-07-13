@@ -8,7 +8,7 @@
 <p> Before we send your bill, please confirm the persons and the
 amount that each should be billed.</p>
 
-<form>
+<form action="/apply_bill" method="post">
   <div class="table-responsive">
 	<table class="table table-striped">
 	  <thead>
@@ -44,7 +44,7 @@ amount that each should be billed.</p>
 	</table>
   </div>
 
-  <button type="submit" action="/apply_bill" method="post" class="btn btn-primary">
+  <button type="submit"  class="btn btn-primary">
     Submit bill
   </button>
 </form>
