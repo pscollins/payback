@@ -149,6 +149,7 @@ def confirm_bill():
 
         cutout_paths_and_users.append((cutout_path, user_records))
 
+    LOG.debug("about to pass to template: ", cutout_paths_and_users)
     return render_template("confirm_bill.html",
                            cutout_paths_and_users=cutout_paths_and_users,
                            default_amount=default_amount)
