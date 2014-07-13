@@ -112,7 +112,7 @@ class VenmoClient(object):
             "access_token": from_.vm_access_token,
             "email": to.email,
             "amount": amount,
-            "note": self.DEFAULT_NODE.format(to.name)
+            "note": self.DEFAULT_NOTE.format(to.name)
         }
 
         req = requests.post(to_send, data=data)
