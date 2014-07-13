@@ -178,7 +178,7 @@ def apply_bill():
         amount = amount_str_to_float(request.form.get("amount|{}".format(el)))
         to_bill = Person.objects(number=person_number).first()
         # .id?????
-        bill = Bill(to=current_user,
+        bill = Bill(to=current_user.id,
                     from_=to_bill,
                     amount=amount)
         bill.save()
