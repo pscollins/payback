@@ -17,11 +17,11 @@ amount that each should be billed.</p>
 		 <th> Amount to Pay </th>
 	   </thead>
 	   <tbody>
-		 {% for index, (cutout_path, users) in index_cutout_paths_and_users %}
+		 {% for cutout_path, users in cutout_paths_and_users %}
          <tr>
            <td> <img src="{{ "/images/{}".format(cutout_path) }}"> </img> </td>
            <td>
-             <select name="{{ "person{}".format(index) }}">
+             <select name="{{ "person{}".format(loop.index) }}">
 
                <option value="{{ users[0].number }}" selected>
                  {{ users[0].name }}
@@ -33,7 +33,7 @@ amount that each should be billed.</p>
                {% endfor %}
                </select>
            </td>
-           <td> <input type="text" name="{{ "amount{}".format(index) }}"
+           <td> <input type="text" name="{{ "amount{}".format(loop.index) }}"
                        value={{ default_amount }}>
            </td>
          </tr>
