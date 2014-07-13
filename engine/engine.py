@@ -41,6 +41,13 @@ class UnrecognizedUserError(SkyBiometryError):
 #                                            ])
 TwilReq = collections.namedtuple("TwilReq", ["from_", "body"])
 
+
+def find_bills_from(user):
+    return Bill.objects(from_=user)
+
+def find_bills_to(user):
+    return Bill.objects(to=user)
+
 class VenmoClient(object):
     BASE_URL = "https://api.venmo.com/v1"
     DEFAULT_NOTE = "Payment from {} via Pay Back."

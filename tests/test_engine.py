@@ -611,6 +611,23 @@ class TestFileUploadManager(unittest.TestCase):
         to_test = self.manager.path_from_hash_for_send_file("foo")
         self.assertEqual(to_test, ".././tests/test_uploads/foo.jpg")
 
+class TestStandAloneFuncs(unittest.TestCase):
+
+    @mock.patch("payback.engine.engine.Bill", autospec=True)
+    def test_find_bills_from(self, mock_bills):
+        person = service.models.Person(**TEST_PERSON_INFO)
+
+        engine.find_bills_from(person)
+
+        mock_bills.objects.assert_called_once_with(from_=person)
+
+    @mock.patch("payback.engine.engine.Bill", autospec=True)
+    def test_find_bills_to(self, mock_bills):
+        person = service.models.Person(**TEST_PERSON_INFO)
+
+        engine.find_bills_to(person)
+
+        mock_bills.objects.assert_called_once_with(to=person)
 
 def main():
     unittest.main()
