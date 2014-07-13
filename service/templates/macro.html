@@ -92,7 +92,7 @@ window.fbAsyncInit = function() {
           <td>
             <div class="checkbox {{ emit_disabled(can_be_paid) }}">
               <label>
-                <input type="checkbox" value="{{ "pay|{}".format(bill.id) }}"
+                <input type="checkbox" name="{{ "pay|{}".format(bill.id) }}"
                        {{ emit_disabled(can_be_paid) }} >
               </label>
             </div>
@@ -100,7 +100,7 @@ window.fbAsyncInit = function() {
           <td>
             <div class="checkbox">
               <label>
-                <input type="checkbox" value="{{ "cancel|{}".format(bill.id) }}">
+                <input type="checkbox" name="{{ "cancel|{}".format(bill.id) }}">
               </label>
             </div>
           </td>
