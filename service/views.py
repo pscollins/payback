@@ -119,8 +119,26 @@ def outstanding():
 @login_required
 def pay_outstanding():
     LOG.debug("bills you want to pay:", request.form)
+    people_concerned = []
 
-    return "SUCCESS"
+    for key, value in request.form.items():
+        action, id_ = key.split("|")
+
+        # not clear what (if anything) we ever get sent for an
+        # unchecked box. assuming that 'value' needs to be truthy.
+        if value:
+            bill = Bill.objects(id=id_).first()
+            if action == "pay":
+                venmo.pay_bill(bill)
+            if action == "cancel" or action == "pay":
+                people_concerned.append(bill.to)
+                bill.delete()
+            else:
+                abort(404)
+
+    flash("Resolved bills with {}.".format(",".join(people_concerned)))
+
+    return redirect(url_for("profile"))
 
 @app.route("/mobile", methods=["GET"])
 @login_required
