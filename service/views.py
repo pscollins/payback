@@ -105,6 +105,15 @@ def flash_conf_message(users_billed):
     flash('Sent a bill to {}.'.format(", ".join([u.name for u in
                                                  users_billed])))
 
+@app.route("/outstanding", methods=["GET"])
+@login_required
+def outstanding():
+    bills_you_owe = engine.find_bills_from(current_user.id)
+    bills_owed_to_you = engine.find_bills_(current_user.id)
+
+    return render_template("outstanding.html",
+                           bills_you_owe=bills_you_owe,
+                           bills_owed_to_you=bills_owed_to_you)
 
 @app.route("/mobile", methods=["GET"])
 @login_required
@@ -158,7 +167,7 @@ def confirm_bill():
     LOG.debug("about to pass to template: ", cutout_paths_and_users)
     return render_template("confirm_bill.html",
                            cutout_paths_and_users=cutout_paths_and_users,
-                           default_amount=default_amount)
+                           default_amount="{:.2f}".format(default_amount))
 
 @app.route("/apply_bill", methods=["POST"])
 @login_required
