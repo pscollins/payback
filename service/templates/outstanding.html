@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block content %}
-<form action="/pay_outstanding" methods=["POST"]>
+<form action="/pay_outstanding" method="post">
 <h1> Money owed to you </h1>
 {{ outstanding_table(bills_owed_to_you, False) }}
 
