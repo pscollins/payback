@@ -6,7 +6,7 @@
 
 {% block content %}
 <p> Before we send your bill, please confirm the persons and the
-amount that each should be billed.</p>
+amount that each should be billed. If you don't want the person pictured to be billed, select "No one" from the dropdown.</p>
 
 <form action="/apply_bill" method="post">
   <div class="table-responsive">
@@ -33,6 +33,9 @@ amount that each should be billed.</p>
                 {{ user.name }}
               </option>
               {% endfor %}
+              <option value="noone">
+                No one.
+              </option>
             </select>
           </td>
           <td> <input type="text" name="{{ "amount|{}".format(loop.index) }}"

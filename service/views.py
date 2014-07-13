@@ -172,6 +172,8 @@ def apply_bill():
 
         if not person_number:
             break
+        elif person_number == "noone":
+            continue
 
         LOG.debug("got person_number: ", person_number)
 
