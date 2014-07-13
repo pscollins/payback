@@ -50,6 +50,8 @@ def find_bills_to(user):
 
 class VenmoClient(object):
     BASE_URL = "https://api.venmo.com/v1"
+    SANDBOX_URL = "https://sandbox-api.venmo.com/v1"
+    PAYMENT_URL = SANDBOX_URL
     DEFAULT_NOTE = "Payment from {} via Pay Back."
 
     def __init__(self, client_id=VM_CLIENT_ID,
@@ -106,7 +108,7 @@ class VenmoClient(object):
 
     # Person * Person -> void
     def make_payment(self, amount, to, from_):
-        to_send = "/".join([self.BASE_URL, "payments"])
+        to_send = "/".join([self.PAYMENT_URL, "payments"])
 
         data = {
             "access_token": from_.vm_access_token,
